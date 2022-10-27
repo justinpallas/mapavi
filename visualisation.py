@@ -40,9 +40,11 @@ ax2.set_ylim([-10, 130])
 # Darstellung der Ruhehörschwelle
 x = np.geomspace(1, 20000, 100)
 y = calc.threshold_in_quiet(x)
-print(calc.threshold_in_quiet(100))
-ax2.plot(x, y, 'k--')
+line1, = ax2.plot(x, y, 'k--')
+# Beschriftung der Graphen
+line1.set_label('Ruhehörschwelle')
+ax2.legend()
 
-# -- Anzeigen der Diagramme --
+# -- Anzeigen der Diagramme -- 
 fig.tight_layout()
 plt.show()
