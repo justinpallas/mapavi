@@ -5,7 +5,9 @@ import calculation as calc
 import visualisation as graph
 
 freq_center = 1000 # Hz
-volume = 80 # dB
+volume = 100 # dB
 
-graph.render_plots(freq_center, volume)
+x = np.geomspace(1, 20000, 100)
+
+graph.render_plots(x, freq_center, volume)
 graph.draw_plots()

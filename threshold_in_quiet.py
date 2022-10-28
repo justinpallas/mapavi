@@ -1,3 +1,4 @@
+import calculation as calc
 
 # Daten für Frequenzen und zugehörigen Pegeln der 
 # Ruhehörschwelle unter Freifeldbedingungen
@@ -5,7 +6,9 @@
 # herausgegeben von DIN Deutsches Institut für Normung e. V. , DIN German Institute for Standardization
 
 # data = [(Frequenz, Pegel)]
-data = [(20, 78.1),
+data = [
+        (16, calc.threshold_in_quiet(16)),
+        (20, 78.1),
         (25, 68.7),
         (31.5, 59.5),
         (40, 51.1),
@@ -42,4 +45,6 @@ data = [(20, 78.1),
         (12500, 12.3),
         (14000, 18.4),
         (16000, 40.2),
-        (18000, 70.4)]
+        (18000, 70.4),
+        (22000, calc.threshold_in_quiet(22000))
+        ]

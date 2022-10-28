@@ -33,6 +33,24 @@ def masked_threshold_high(frequency, volume, freq_center):
     level = slope * (bark - zero)
     return level
 
+# def masked_threshold(frequency, volume, freq_center):
+#     # freq_low = np.minimum(frequency, freq_center)
+#     # level_low = masked_threshold_low(freq_low, volume, freq_center)
+#     # level_low, idx_low = np.unique(level_low, return_index=True)
+#     # level_low = level_low[np.sort(idx_low)]
+#     # print(level_low)
+
+#     freq_high = np.maximum(frequency, freq_center)
+#     count_high = np.count_nonzero(frequency < freq_center)
+#     level_high = masked_threshold_high(freq_high, volume, freq_center)
+#     for i in range(count_high):
+#         level_high = np.delete(level_high, i)
+
+    print(level_high)
+    #levels = np.append(level_low, level_high)
+    #level, idx = np.unique(levels, return_index=True)
+    #print(level[np.sort(idx)])
+
 # Berechnung der Ruhehörschwelle von gegebenen Frequenzen
 def threshold_in_quiet(frequency):
     # Formel aus Skript TT2 Seite 23
