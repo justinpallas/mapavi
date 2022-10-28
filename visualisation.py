@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.ticker as mticker
 import calculation as calc
-import threshold_in_quiet as tiq
+import data as data
 
 fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8,7))
 
@@ -45,9 +45,7 @@ def render_plots(x, freq_center, volume):
     ax2.set_ylim([-10, 130])
     
     # Darstellung der Ruhehörschwelle
-    thresh_quiet = calc.threshold_in_quiet(x)
-    #line1, = ax2.plot(x, thresh_quiet, 'k--')
-    tiq_freq, tiq_level = list(map(list, zip(*tiq.data)))
+    tiq_freq, tiq_level = list(map(list, zip(*data.tiq)))
     line1, = ax2.plot(tiq_freq, tiq_level, 'k--')
     
     # Versuch Darstellung MHS von SBR
