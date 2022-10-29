@@ -11,5 +11,6 @@ volume = 100 # dB
 #x = np.geomspace(1, 20000, 100)
 x = data.thirds_center
 
+print(calc.masked_threshold(x, volume, freq_center))
 graph.render_plots(x, freq_center, volume)
 graph.draw_plots()

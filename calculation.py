@@ -57,20 +57,23 @@ def masked_threshold_high(frequency, volume, freq_center):
         level.append(x)
     return level
 
-# def masked_threshold(frequency, volume, freq_center):
-#     # freq_low = np.minimum(frequency, freq_center)
-#     # level_low = masked_threshold_low(freq_low, volume, freq_center)
-#     # level_low, idx_low = np.unique(level_low, return_index=True)
-#     # level_low = level_low[np.sort(idx_low)]
-#     # print(level_low)
+def masked_threshold(frequency, volume, freq_center):
+    freq_low = []
+    freq_high = []
+    for i in frequency:
+        if i <= freq_center:
+            freq_low.append(i)
+        elif i > freq_center:
+            freq_high.append(i)
+    level_low = masked_threshold_low(freq_low, volume, freq_center)
+    level_high = masked_threshold_high(freq_high, volume, freq_center)
+    level = level_low
+    for i in level_high:
+        level.append(i)
+    return level
+            
 
-#     freq_high = np.maximum(frequency, freq_center)
-#     count_high = np.count_nonzero(frequency < freq_center)
-#     level_high = masked_threshold_high(freq_high, volume, freq_center)
-#     for i in range(count_high):
-#         level_high = np.delete(level_high, i)
-
-    print(level_high)
+   # print(level_high)
     #levels = np.append(level_low, level_high)
     #level, idx = np.unique(levels, return_index=True)
     #print(level[np.sort(idx)])
