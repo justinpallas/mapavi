@@ -45,8 +45,7 @@ def render_plots(x, freq_center, volume):
     ax2.set_ylim([-10, 130])
     
     # Darstellung der Ruhehörschwelle
-    tiq_freq, tiq_level = list(map(list, zip(*data.tiq)))
-    line1, = ax2.plot(tiq_freq, tiq_level, 'k--')
+    line1, = ax2.plot(data.tiq_freq, data.tiq_level, 'k--')
     
     # Versuch Darstellung MHS von SBR
     thresh_low = calc.masked_threshold_low(x, volume, freq_center)

@@ -49,6 +49,11 @@ tiq = [
         (22000, calc.threshold_in_quiet(22000))
 ]
 
+tiq_freq, tiq_level = list(map(list, zip(*tiq)))
+
+
+# Terzbänder nach EN ISO 266 "Normfrequenzen in Hz für akustische Messungen"
+
 # thirds = [(Untere_Frequenz, Mittenfrequenz, Obere_Frequenz)]
 thirds = [
         (22.4, 25, 28.2),
@@ -82,3 +87,5 @@ thirds = [
         (14130, 16000, 17780),
         (17780, 20000, 22390)
 ]
+
+thirds_low, thirds_center, thirds_high = list(map(list, zip(*thirds)))
