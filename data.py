@@ -1,13 +1,18 @@
-import calculation as calc
 
 # Daten für Frequenzen und zugehörigen Pegeln der 
 # Ruhehörschwelle unter Freifeldbedingungen
 # aus DIN EN ISO 389-7:2020-06
 # herausgegeben von DIN Deutsches Institut für Normung e. V. , DIN German Institute for Standardization
 
+# Berechnung der Ruhehörschwelle von gegebenen Frequenzen
+def threshold_in_quiet(frequency):
+    # Formel aus Skript TT2 Seite 23
+    level = (3.64*(frequency/1000)**-0.8)-6.5**(-0.6*(frequency/1000-3.3)**2)+(10**-3)*(frequency/1000)**4
+    return level
+
 # tiq = [(Frequenz, Pegel)]
 tiq = [
-        (16, calc.threshold_in_quiet(16)),
+        (16, threshold_in_quiet(16)),
         (20, 78.1),
         (25, 68.7),
         (31.5, 59.5),
@@ -46,7 +51,7 @@ tiq = [
         (14000, 18.4),
         (16000, 40.2),
         (18000, 70.4),
-        (22000, calc.threshold_in_quiet(22000))
+        (22000, threshold_in_quiet(22000))
 ]
 
 tiq_freq, tiq_level = list(map(list, zip(*tiq)))
@@ -89,3 +94,10 @@ thirds = [
 ]
 
 thirds_low, thirds_center, thirds_high = list(map(list, zip(*thirds)))
+thirds_all = [i for sub in thirds for i in sub]
+
+def samples():
+        freqs = []
+        for i in range(22000):
+                freqs.append(i)
+        return freqs

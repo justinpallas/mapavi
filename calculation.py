@@ -1,4 +1,5 @@
 import numpy as np
+import data as data
 
 # Umrechnung von Frequenz in die Entsprechende Tonheit (Bark)
 # def conv_to_bark(frequency):
@@ -27,24 +28,13 @@ def conv_to_freq(bark):
         frequency = (1960*(bark+0.53))/(26.28-bark)
         return frequency
 
-
-def masked_threshold_low(frequency, volume, freq_center):
-    slope = 27 # Steigung S1
-    center = conv_to_bark(freq_center) # Bandmittenfrequenz in Bark
-    bark = conv_to_bark(frequency) # jeweilige Frequenz in Bark
-    # Berechnung des Schnittpunkts mit der X-Achse
-    n = -slope * center + volume
-    zero = (-n)/slope
-    # Berechnung und Ausgabe des entsprechenden Pegels der Mithörschwelle
-    level = []
-    for i in bark:
-        x = slope * (i - zero)
-        level.append(x)
-    return level
-
-
-def masked_threshold_high(frequency, volume, freq_center):
-    slope = -(24+(0.23/(freq_center/1000))-0.2*volume) # Steigung S2
+def calculate_threshold(frequency, volume, freq_center, group):
+    # Bestimmung ob linke oder rechte Flanke berechnet wird
+    # mit 0 = linke Flanke, und 1 = rechte Flanke
+    if group == 0:
+        slope = 27 # Steigung S1 für linke Flanke
+    elif group == 1:
+        slope = -(24+(0.23/(freq_center/1000))-0.2*volume) # Steigung S2 für rechte Flanke
     center = conv_to_bark(freq_center) # Bandmittenfrequenz in Bark
     bark = conv_to_bark(frequency) # jeweilige Frequenz in Bark
     # Berechnung des Schnittpunkts mit der X-Achse
@@ -65,21 +55,26 @@ def masked_threshold(frequency, volume, freq_center):
             freq_low.append(i)
         elif i > freq_center:
             freq_high.append(i)
-    level_low = masked_threshold_low(freq_low, volume, freq_center)
-    level_high = masked_threshold_high(freq_high, volume, freq_center)
+    level_low = calculate_threshold(freq_low, volume, freq_center, 0)
+    level_high = calculate_threshold(freq_high, volume, freq_center, 1)
     level = level_low
     for i in level_high:
         level.append(i)
     return level
-            
 
-   # print(level_high)
-    #levels = np.append(level_low, level_high)
-    #level, idx = np.unique(levels, return_index=True)
-    #print(level[np.sort(idx)])
-
-# Berechnung der Ruhehörschwelle von gegebenen Frequenzen
-def threshold_in_quiet(frequency):
-    # Formel aus Skript TT2 Seite 23
-    level = (3.64*(frequency/1000)**-0.8)-6.5**(-0.6*(frequency/1000-3.3)**2)+(10**-3)*(frequency/1000)**4
-    return level
+def get_third_band(freq_center, volume):
+    n = 0
+    for i in data.thirds_center:
+        if freq_center > i:
+            n += 1
+    if freq_center == data.thirds_center[n]:
+        return data.thirds[n]
+    else:
+        diff_up = data.thirds_center[n] - freq_center
+        diff_down = freq_center - data.thirds_center[n-1]
+        if diff_up < diff_down:
+            return data.thirds[n]
+        elif diff_up > diff_down:
+            return data.thirds[n-1]
+        else: 
+            return data.thirds[n]
