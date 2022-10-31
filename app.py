@@ -5,8 +5,8 @@ import calculation as calc
 import visualisation as graph
 import data as data
 
-freq_center = 250 # Hz
-volume = 60 # dB
+freq_center = 1000 # Hz
+volume = 100 # dB
 
 #x = np.geomspace(1, 20000, 100)
 x = data.samples()

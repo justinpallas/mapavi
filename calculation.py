@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import data as data
 
@@ -28,6 +29,12 @@ def conv_to_freq(bark):
         frequency = (1960*(bark+0.53))/(26.28-bark)
         return frequency
 
+# Berechnung des Verdeckungsmaßes av
+def masking_index(frequency):
+    index = -2 - math.log(1 + (frequency / 502 )**2.5) / math.log(10)
+    return index
+
+
 def calculate_threshold(frequency, volume, freq_center, group):
     # Bestimmung ob linke oder rechte Flanke berechnet wird
     # mit 0 = linke Flanke, und 1 = rechte Flanke
@@ -42,8 +49,8 @@ def calculate_threshold(frequency, volume, freq_center, group):
     zero = (-n)/slope
     # Berechnung und Ausgabe des entsprechenden Pegels der Mithörschwelle
     level = []
-    for i in bark:
-        x = slope * (i - zero)
+    for i in range(len(bark)):
+        x = slope * (bark[i] - zero) + masking_index(freq_center)
         level.append(x)
     return level
 
