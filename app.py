@@ -5,11 +5,12 @@ import calculation as calc
 import visualisation as graph
 import data as data
 
-freq_center = 1000 # Hz
+freq_center = 4000 # Hz
 volume = 100 # dB
 
 #x = np.geomspace(1, 20000, 100)
 x = data.samples()
 
+print(calc.masking_index(freq_center))
 graph.render_plots(x, freq_center, volume)
 graph.draw_plots()

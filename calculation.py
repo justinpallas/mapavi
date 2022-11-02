@@ -34,7 +34,7 @@ def masking_index(frequency):
     index = -2 - math.log(1 + (frequency / 502 )**2.5) / math.log(10)
     return index
 
-
+# Berechnung der einzelnen Flanken der Mithörschwelle
 def calculate_threshold(frequency, volume, freq_center, group):
     # Bestimmung ob linke oder rechte Flanke berechnet wird
     # mit 0 = linke Flanke, und 1 = rechte Flanke
@@ -54,6 +54,7 @@ def calculate_threshold(frequency, volume, freq_center, group):
         level.append(x)
     return level
 
+
 def masked_threshold(frequency, volume, freq_center):
     freq_low = []
     freq_high = []
@@ -69,7 +70,9 @@ def masked_threshold(frequency, volume, freq_center):
         level.append(i)
     return level
 
-def get_third_band(freq_center, volume):
+# Bestimmung welchem Terzband die jeweilige Mittenfrequenz am nächsten ist
+# und Rückgabe des entsprechenden Terzbands
+def get_third_band(freq_center):
     n = 0
     for i in data.thirds_center:
         if freq_center > i:
@@ -85,3 +88,24 @@ def get_third_band(freq_center, volume):
             return data.thirds[n-1]
         else: 
             return data.thirds[n]
+        
+def bandwidth(freq_center):
+    band = get_third_band(freq_center)
+    width = band[2] - band[0]
+    return width
+
+def signal(freq_center, volume, xy):
+    band = get_third_band(freq_center)
+    signal = [
+        (band[0], -10),
+        (band[0], volume),
+        (band[1], volume),
+        (band[2], volume),
+        (band[2], -10)
+    ]
+    x, y = list(map(list, zip(*signal)))
+    if xy == 'x':
+        return x
+    elif xy == 'y':
+        return y
+
