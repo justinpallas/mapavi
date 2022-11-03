@@ -26,7 +26,7 @@ def render_plots(x, freq_center, volume):
     
     # Y-Achse
     ax1.set_ylabel("Pegel L [dB]")
-    ax1.set_ylim([-10, 130])
+    ax1.set_ylim([-10, 80])
 
     # Darstellung der Ruhehörschwelle
     line1, = ax1.plot(calc.conv_to_bark(data.tiq_freq), data.tiq_level, 'k--')
@@ -35,12 +35,12 @@ def render_plots(x, freq_center, volume):
     line2, = ax1.plot((calc.conv_to_bark(calc.signal(freq_center, volume, 'x'))), calc.signal(freq_center, volume, 'y'))
 
     # Versuch Darstellung MHS von SBR
-    thresh = calc.masked_threshold(x, volume, freq_center)
+    thresh = calc.multi_threshold(x, volume, freq_center)
     line3, = ax1.plot(calc.conv_to_bark(x), thresh, 'r')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
-    line2.set_label('Terzrauschen mit fm = ' + str(freq_center) + ' Hz und L = ' + str(volume) + ' dB')
+    line2.set_label('Physikalisches Signal')
     line3.set_label('Mithörschwelle')
     ax1.legend()
 
@@ -59,7 +59,7 @@ def render_plots(x, freq_center, volume):
     
     # Y-Achse
     ax2.set_ylabel("Pegel L [dB]")
-    ax2.set_ylim([-10, 130])
+    ax2.set_ylim([-10, 80])
     
     # Darstellung der Ruhehörschwelle
     line1, = ax2.plot(data.tiq_freq, data.tiq_level, 'k--')
@@ -68,12 +68,12 @@ def render_plots(x, freq_center, volume):
     line2, = ax2.plot(calc.signal(freq_center, volume, 'x'), calc.signal(freq_center, volume, 'y'))
     
     # Versuch Darstellung MHS von SBR
-    thresh = calc.masked_threshold(x, volume, freq_center)
+    thresh = calc.multi_threshold(x, volume, freq_center)
     line3, = ax2.plot(x, thresh, 'r')
     
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
-    line2.set_label('Terzrauschen mit fm = ' + str(freq_center) + ' Hz und L = ' + str(volume) + ' dB')
+    line2.set_label('Physikalisches Signal')
     line3.set_label('Mithörschwelle')
     ax2.legend()
 

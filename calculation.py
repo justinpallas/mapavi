@@ -55,7 +55,7 @@ def calculate_threshold(frequency, volume, freq_center, group):
     return level
 
 
-def masked_threshold(frequency, volume, freq_center):
+def threshold(frequency, volume, freq_center):
     freq_low = []
     freq_high = []
     for i in frequency:
@@ -69,6 +69,34 @@ def masked_threshold(frequency, volume, freq_center):
     for i in level_high:
         level.append(i)
     return level
+
+def multi_threshold(frequency, volume, freq_center):
+    levels = []
+    for i in range(len(freq_center)):
+        freq_low = []
+        freq_high = []
+        for n in frequency:
+            if n <= freq_center[i]:
+                freq_low.append(n)
+            elif n > freq_center[i]:
+                freq_high.append(n)
+        level_low = calculate_threshold(freq_low, volume[i], freq_center[i], 0)
+        level_high = calculate_threshold(freq_high, volume[i], freq_center[i], 1)
+        level = (level_low)
+        for n in level_high:
+            level.append(n)
+        levels.append(level)
+    #print('levels = ' + str(levels))
+    thresh = []
+    for i in levels[0]:
+        thresh.append(i)
+    for i in range(len(freq_center) - 1):
+        for n in range(len(frequency)):
+            if thresh[n] < levels[i + 1][n]:
+                thresh[n] = levels[i + 1][n]
+    #print('thresh = ' + str(thresh))
+    return thresh
+        
 
 # Bestimmung welchem Terzband die jeweilige Mittenfrequenz am nächsten ist
 # und Rückgabe des entsprechenden Terzbands
@@ -95,15 +123,19 @@ def bandwidth(freq_center):
     return width
 
 def signal(freq_center, volume, xy):
-    band = get_third_band(freq_center)
-    signal = [
-        (band[0], -10),
-        (band[0], volume),
-        (band[1], volume),
-        (band[2], volume),
-        (band[2], -10)
-    ]
-    x, y = list(map(list, zip(*signal)))
+    signals = []
+    for i in range(len(freq_center)):
+        band = get_third_band(freq_center[i])
+        signal = [
+            (band[0], -10),
+            (band[0], volume[i]),
+            (band[1], volume[i]),
+            (band[2], volume[i]),
+            (band[2], -10)
+        ]
+        for n in signal:
+            signals.append(n)
+    x, y = list(map(list, zip(*signals)))
     if xy == 'x':
         return x
     elif xy == 'y':
