@@ -3,9 +3,6 @@ import numpy as np
 import data as data
 
 # Umrechnung von Frequenz in die Entsprechende Tonheit (Bark)
-# def conv_to_bark(frequency):
-#     bark = ((26.81*frequency)/(1960+frequency))-0.53
-#     return bark
 def conv_to_bark(frequency):
     if type(frequency) is list:
         bark = []
