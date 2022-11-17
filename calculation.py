@@ -51,7 +51,7 @@ def calculate_threshold(frequency, volume, freq_center, group):
         level.append(x)
     return level
 
-
+# Berechnen der Mithörschwelle eines einzelnen Schmalbandrauschens
 def threshold(frequency, volume, freq_center):
     freq_low = []
     freq_high = []
@@ -67,6 +67,7 @@ def threshold(frequency, volume, freq_center):
         level.append(i)
     return level
 
+# Berechnen der Gesamtmithörschwelle mehrerer Schmalbandrauschen
 def multi_threshold(frequency, volume, freq_center):
     levels = []
     for i in range(len(freq_center)):
@@ -95,34 +96,43 @@ def multi_threshold(frequency, volume, freq_center):
     return thresh
         
 
-# Bestimmung welchem Terzband die jeweilige Mittenfrequenz am nächsten ist
+# Bestimmung welchem Terzband die jeweilige Frequenz am nächsten ist
 # und Rückgabe des entsprechenden Terzbands
-def get_third_band(freq_center):
+# Unterscheidung ob mit Mittenfrequenz, Startfrequenz, oder Endfrequenz des Bands verglichen wird
+def get_third_band(freq, param):
     n = 0
-    for i in data.thirds_center:
-        if freq_center > i:
+    if param == 'center':
+        thirds = data.thirds_center
+    elif param == 'low':
+        thirds = data.thirds_low
+    elif param == 'high':
+        thirds = data.thirds_high
+    for i in thirds:
+        if freq > i:
             n += 1
-    if freq_center == data.thirds_center[n]:
+    if freq == thirds[n]:
         return data.thirds[n]
     else:
-        diff_up = data.thirds_center[n] - freq_center
-        diff_down = freq_center - data.thirds_center[n-1]
+        diff_up = thirds[n] - freq
+        diff_down = freq - thirds[n-1]
         if diff_up < diff_down:
             return data.thirds[n]
         elif diff_up > diff_down:
             return data.thirds[n-1]
         else: 
             return data.thirds[n]
-        
+
+# Bestimmung der Bandbreite eines Terzbandes mit einer bestimmten Mittenfrequenz        
 def bandwidth(freq_center):
-    band = get_third_band(freq_center)
+    band = get_third_band(freq_center, 'center')
     width = band[2] - band[0]
     return width
 
+# Bestimmung der x- und y-Werte zum Einzeichnen der angegebenen Terzbänder
 def signal(freq_center, volume, xy):
     signals = []
     for i in range(len(freq_center)):
-        band = get_third_band(freq_center[i])
+        band = get_third_band(freq_center[i], 'center')
         signal = [
             (band[0], -10),
             (band[0], volume[i]),
