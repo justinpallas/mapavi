@@ -148,3 +148,16 @@ def signal(freq_center, volume, xy):
     elif xy == 'y':
         return y
 
+def cut_to_thirds(signal):
+    start = get_third_band(signal[0], 'low')
+    end = get_third_band(signal[1], 'high')
+    n = 0
+    thirds = []
+    while start != data.thirds[n]:
+        n += 1
+    thirds.append(start)
+    while data.thirds[n] != end:
+        n += 1
+        thirds.append(data.thirds[n])
+    return thirds
+
