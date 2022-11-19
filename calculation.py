@@ -95,32 +95,21 @@ def multi_threshold(frequency, volume, freq_center):
     #print('thresh = ' + str(thresh))
     return thresh
         
-
-# Bestimmung welchem Terzband die jeweilige Frequenz am nächsten ist
-# und Rückgabe des entsprechenden Terzbands
-# Unterscheidung ob mit Mittenfrequenz, Startfrequenz, oder Endfrequenz des Bands verglichen wird
+# Berechnet das Terzband zur entsprechenden unteren-, oberen-, oder Mittenfrequenz
 def get_third_band(freq, param):
-    n = 0
-    if param == 'center':
-        thirds = data.thirds_center
-    elif param == 'low':
-        thirds = data.thirds_low
+    if param == 'low':
+        low = freq
+        high = freq * 1.26
+        center = low + ((high - low)/2)
     elif param == 'high':
-        thirds = data.thirds_high
-    for i in thirds:
-        if freq > i:
-            n += 1
-    if freq == thirds[n]:
-        return data.thirds[n]
-    else:
-        diff_up = thirds[n] - freq
-        diff_down = freq - thirds[n-1]
-        if diff_up < diff_down:
-            return data.thirds[n]
-        elif diff_up > diff_down:
-            return data.thirds[n-1]
-        else: 
-            return data.thirds[n]
+        low = freq / 1.26
+        high = freq
+        center = low + ((high - low)/2)
+    elif param == 'center':
+        low = (2*freq)/2.26
+        high = low * 1.26
+        center = freq
+    return (low, center, high)
 
 # Bestimmung der Bandbreite eines Terzbandes mit einer bestimmten Mittenfrequenz        
 def bandwidth(freq_center):

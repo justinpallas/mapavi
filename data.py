@@ -1,14 +1,14 @@
 
-# Daten für Frequenzen und zugehörigen Pegeln der 
-# Ruhehörschwelle unter Freifeldbedingungen
-# aus DIN EN ISO 389-7:2020-06
-# herausgegeben von DIN Deutsches Institut für Normung e. V. , DIN German Institute for Standardization
-
 # Berechnung der Ruhehörschwelle von gegebenen Frequenzen
 def threshold_in_quiet(frequency):
     # Formel aus Skript TT2 Seite 23
     level = (3.64*(frequency/1000)**-0.8)-6.5**(-0.6*(frequency/1000-3.3)**2)+(10**-3)*(frequency/1000)**4
     return level
+
+# Daten für Frequenzen und zugehörigen Pegeln der 
+# Ruhehörschwelle unter Freifeldbedingungen
+# aus DIN EN ISO 389-7:2020-06
+# herausgegeben von DIN Deutsches Institut für Normung e. V. , DIN German Institute for Standardization
 
 # tiq = [(Frequenz, Pegel)]
 tiq = [
@@ -95,6 +95,32 @@ thirds = [
 
 thirds_low, thirds_center, thirds_high = list(map(list, zip(*thirds)))
 thirds_all = [i for sub in thirds for i in sub]
+
+# Bestimmung welchem Terzband die jeweilige Frequenz am nächsten ist
+# und Rückgabe des entsprechenden Terzbands
+# Unterscheidung ob mit Mittenfrequenz, Startfrequenz, oder Endfrequenz des Bands verglichen wird
+def get_third_band(freq, param):
+    n = 0
+    if param == 'center':
+        list = thirds_center
+    elif param == 'low':
+        list = thirds_low
+    elif param == 'high':
+        list = thirds_high
+    for i in list:
+        if freq > i:
+            n += 1
+    if freq == list[n]:
+        return list[n]
+    else:
+        diff_up = list[n] - freq
+        diff_down = freq - list[n-1]
+        if diff_up < diff_down:
+            return list[n]
+        elif diff_up > diff_down:
+            return list[n-1]
+        else: 
+            return list[n]
 
 def samples():
         freqs = []

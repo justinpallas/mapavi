@@ -30,5 +30,6 @@ volume = [60, 60, 60]  # dB
 x = data.samples()
 #x = [10, 100, 1000, 4000, 10000, 16000]
 
+print(calc.get_third_band(1006, 'center'))
 graph.render_plots(x, freq_center, volume)
 graph.draw_plots()
