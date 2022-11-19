@@ -6,24 +6,24 @@ import visualisation as graph
 import data as data
 
 #signal=(start_freq, end_freq, volume)
-signal=[
-    (250, 1000, 60),
-    (4000, 8000, 60),
-]
+# signal=[
+#     (25, 500, 60),
+#     (4000, 8000, 60),
+# ]
 
-thirds = []
-for i in signal:
-    cutted = calc.cut_to_thirds(i)
-    for z in cutted:
-        thirds.append(z)
-low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
+# thirds = []
+# for i in signal:
+#     cutted = calc.cut_to_thirds(i)
+#     for z in cutted:
+#         thirds.append(z)
+# low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
 
-freq_center = center_freqs  # Hz
-volume = []  # dB
+freq_center = [250, 1000, 4000]  # Hz
+volume = [60, 60, 60]  # dB
 
-for n in range(len(signal)):
-    for z in calc.cut_to_thirds(signal[n]):
-        volume.append(signal[n][2])
+# for n in range(len(signal)):
+#     for z in calc.cut_to_thirds(signal[n]):
+#         volume.append(signal[n][2])
 
 
 #x = np.geomspace(1, 20000, 100)
