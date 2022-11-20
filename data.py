@@ -122,6 +122,19 @@ def get_third_band(freq, param):
         else: 
             return list[n]
 
+def cut_to_thirds(signal):
+    start = get_third_band(signal[0], 'low')
+    end = get_third_band(signal[1], 'high')
+    n = 0
+    thirds = []
+    while start != thirds[n]:
+        n += 1
+    thirds.append(start)
+    while thirds[n] != end:
+        n += 1
+        thirds.append(thirds[n])
+    return thirds
+
 def samples():
         freqs = []
         for i in range(22000):

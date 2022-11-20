@@ -137,16 +137,13 @@ def signal(freq_center, volume, xy):
     elif xy == 'y':
         return y
 
+# Aufteilen eines breitbandigen Signals in einzelne Terzen
 def cut_to_thirds(signal):
     start = get_third_band(signal[0], 'low')
     end = get_third_band(signal[1], 'high')
-    n = 0
-    thirds = []
-    while start != data.thirds[n]:
-        n += 1
-    thirds.append(start)
-    while data.thirds[n] != end:
-        n += 1
-        thirds.append(data.thirds[n])
+    curr_band = start
+    thirds = [curr_band]
+    while curr_band[2] <= end[2]:
+        curr_band = get_third_band(curr_band[2], 'low')
+        thirds.append(curr_band)
     return thirds
-
