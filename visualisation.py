@@ -39,7 +39,10 @@ def render_plots(x, freq_center, volume):
 
     # Versuch Darstellung MHS von SBR
     thresh = calc.multi_threshold(x, volume, freq_center)
-    line3, = ax1.plot(calc.conv_to_bark(x), thresh, 'r')
+    smoothed = calc.smoothed_threshold(x, volume, freq_center)
+    smoothing_line = calc.smoothing_line(x, volume, freq_center)
+    #line3, = ax1.plot(calc.conv_to_bark(x), thresh, 'r')
+    line3, = ax1.plot(calc.conv_to_bark(x), smoothed, 'g')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
@@ -73,7 +76,11 @@ def render_plots(x, freq_center, volume):
 
     # Versuch Darstellung MHS von SBR
     thresh = calc.multi_threshold(x, volume, freq_center)
-    line3, = ax2.plot(x, thresh, 'r')
+    smoothed = calc.smoothed_threshold(x, volume, freq_center)
+    smoothing_line = calc.smoothing_line(x, volume, freq_center)
+    #line3, = ax2.plot(x, thresh, 'r')
+    line3, = ax2.plot(x, smoothed, 'g')
+    #line5, = ax2.plot(x, smoothing_line, 'y')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')

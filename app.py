@@ -7,11 +7,9 @@ import data as data
 
 #signal=(start_freq, end_freq, volume)
 signal = [
-    (1, 400, 60),
-    (400, 800, 0),
-    (800, 4000, 40),
-    (4000, 22000, 0)
-
+    (100, 400, 60),
+    (400, 4000, 20),
+    (4000, 8000, 40)
 ]
 type = 'white' # white = weißes Rauschen, pink = rosa Rauschen
 

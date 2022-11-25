@@ -51,6 +51,28 @@ def calculate_threshold(frequency, volume, freq_center, group):
         level.append(x)
     return level
 
+def smoothing_line(frequency, volume, freq_center):
+    level = []
+    # Werte vor erster Mittenfrequenz festlegen
+    for i in frequency:
+        if i < freq_center[0]:
+            level.append(-100)
+    keys = []
+    for i in range(len(freq_center)):
+        keys.append(volume[i] + masking_index(freq_center[i]))
+    for i in range(len(freq_center) - 1):
+        m = (keys[i + 1] - keys[i])/(freq_center[i + 1] - freq_center[i])
+        n = keys[i] - m * freq_center[i]
+        for z in frequency:
+            if z >= freq_center[i] and z < freq_center[i + 1]:
+                y = m * z + n
+                level.append(y)
+    for i in frequency:
+        if i > freq_center[len(freq_center) - 1]:
+            level.append(-100)
+    return level
+
+
 # Berechnen der Mithörschwelle eines einzelnen Schmalbandrauschens
 def threshold(frequency, volume, freq_center):
     freq_low = []
@@ -85,6 +107,7 @@ def multi_threshold(frequency, volume, freq_center):
             level.append(n)
         levels.append(level)
     #print('levels = ' + str(levels))
+    levels.append(smoothing_line(frequency, volume, freq_center))
     thresh = []
     for i in levels[0]:
         thresh.append(i)
@@ -94,6 +117,17 @@ def multi_threshold(frequency, volume, freq_center):
                 thresh[n] = levels[i + 1][n]
     #print('thresh = ' + str(thresh))
     return thresh
+
+def smoothed_threshold(frequency, volume, freq_center):
+    out = []
+    thresh = multi_threshold(frequency, volume, freq_center)
+    smoothing = smoothing_line(frequency, volume, freq_center)
+    for i in range(len(thresh)):
+        if thresh[i] < smoothing[i]:
+            out.append(smoothing[i])
+        else:
+            out.append(thresh[i])
+    return out
         
 # Berechnet das Terzband zur entsprechenden unteren-, oberen-, oder Mittenfrequenz
 def get_third_band(freq, param):
