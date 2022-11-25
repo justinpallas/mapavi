@@ -6,24 +6,47 @@ import visualisation as graph
 import data as data
 
 #signal=(start_freq, end_freq, volume)
-signal=[
-    (25, 500, 60),
-    (4000, 8000, 60),
+signal = [
+    (1, 400, 60),
+    (400, 800, 0),
+    (800, 4000, 40),
+    (4000, 22000, 0)
+
 ]
+type = 'white' # white = weißes Rauschen, pink = rosa Rauschen
 
 thirds = []
 for i in signal:
-    cutted = calc.cut(i)
+    cutted = calc.cut_to_thirds(i)
     for z in cutted:
         thirds.append(z)
 low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
 
-freq_center = center_freqs  # Hz
-volume = []  # dB
 
-for n in range(len(signal)):
-    for z in calc.cut(signal[n]):
-        volume.append(signal[n][2])
+def get_volumes(type):
+    volumes = []
+    if type == 'pink':
+        for n in range(len(signal)):
+            thirds = calc.cut_to_thirds(signal[n])
+            for z in thirds:
+                volumes.append(signal[n][2])
+    elif type == 'white':
+        for n in range(len(signal)):
+            thirds = calc.cut_to_thirds(signal[n])
+            for z in thirds:
+                freq_high = z[2]
+                if freq_high <= 500:
+                    volumes.append(signal[n][2])
+                else:
+                    distance = len(calc.cut_to_thirds((500, freq_high)))
+                    level = signal[n][2] + distance -1
+                    volumes.append(level)
+    return volumes
+
+freq_center = center_freqs  # Hz
+#freq_center = [250, 1000, 4000]
+volume = get_volumes(type)  # dB
+#volume = [50, 60, 40]
 
 
 #x = np.geomspace(1, 20000, 100)

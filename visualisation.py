@@ -43,7 +43,7 @@ def render_plots(x, freq_center, volume):
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
-    line2.set_label('Physikalisches Signal')
+    line2.set_label('Ermittelte Terzbänder')
     line3.set_label('Mithörschwelle')
     #ax1.legend()
 
@@ -77,7 +77,7 @@ def render_plots(x, freq_center, volume):
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
-    line2.set_label('Physikalisches Signal')
+    line2.set_label('Ermittelte Terzbänder')
     line3.set_label('Mithörschwelle')
     ax2.legend(loc='lower center', bbox_to_anchor=(0.5, -0.37), fancybox=True, shadow=True)
 
