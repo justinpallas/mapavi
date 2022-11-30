@@ -3,6 +3,8 @@ import numpy as np
 import data as data
 
 # Umrechnung von Frequenz in die Entsprechende Tonheit (Bark)
+
+
 def conv_to_bark(frequency):
     if type(frequency) is list:
         bark = []
@@ -15,6 +17,8 @@ def conv_to_bark(frequency):
         return bark
 
 # Umrechnung von Tonheit (Bark) in die Entsprechende Frequenz (Hz)
+
+
 def conv_to_freq(bark):
     if type(bark) is list:
         frequency = []
@@ -27,22 +31,27 @@ def conv_to_freq(bark):
         return frequency
 
 # Berechnung des Verdeckungsmaßes av
+
+
 def masking_index(frequency):
-    index = -2 - math.log(1 + (frequency / 502 )**2.5) / math.log(10)
+    index = -2 - math.log(1 + (frequency / 502)**2.5) / math.log(10)
     return index
 
 # Berechnung der einzelnen Flanken der Mithörschwelle
+
+
 def calculate_threshold(frequency, volume, freq_center, group):
     # Bestimmung ob linke oder rechte Flanke berechnet wird
     # mit 0 = linke Flanke, und 1 = rechte Flanke
     if group == 0:
-        slope = 27 # Steigung S1 für linke Flanke
+        slope = 27  # Steigung S1 für linke Flanke
     elif group == 1:
-        slope = -(24+(0.23/(freq_center/1000))-0.2*volume) # Steigung S2 für rechte Flanke
-    center = conv_to_bark(freq_center) # Bandmittenfrequenz in Bark
-    bark = conv_to_bark(frequency) # jeweilige Frequenz in Bark
+        # Steigung S2 für rechte Flanke
+        slope = -(24+(0.23/(freq_center/1000))-0.2*volume)
+    center = conv_to_bark(freq_center)  # Bandmittenfrequenz in Bark
+    bark = conv_to_bark(frequency)  # jeweilige Frequenz in Bark
     # Berechnung des Schnittpunkts mit der X-Achse
-    n = -slope * center + volume    
+    n = -slope * center + volume
     zero = (-n)/slope
     # Berechnung und Ausgabe des entsprechenden Pegels der Mithörschwelle
     level = []
@@ -50,6 +59,7 @@ def calculate_threshold(frequency, volume, freq_center, group):
         x = slope * (bark[i] - zero) + masking_index(freq_center)
         level.append(x)
     return level
+
 
 def smoothing_line(frequency, volume, freq_center):
     level = []
@@ -68,7 +78,7 @@ def smoothing_line(frequency, volume, freq_center):
                 y = m * z + n
                 level.append(y)
     for i in frequency:
-        if i > freq_center[len(freq_center) - 1]:
+        if i >= freq_center[len(freq_center) - 1]:
             level.append(-100)
     return level
 
@@ -90,6 +100,8 @@ def threshold(frequency, volume, freq_center):
     return level
 
 # Berechnen der Gesamtmithörschwelle mehrerer Schmalbandrauschen
+
+
 def multi_threshold(frequency, volume, freq_center):
     levels = []
     for i in range(len(freq_center)):
@@ -101,7 +113,8 @@ def multi_threshold(frequency, volume, freq_center):
             elif n > freq_center[i]:
                 freq_high.append(n)
         level_low = calculate_threshold(freq_low, volume[i], freq_center[i], 0)
-        level_high = calculate_threshold(freq_high, volume[i], freq_center[i], 1)
+        level_high = calculate_threshold(
+            freq_high, volume[i], freq_center[i], 1)
         level = (level_low)
         for n in level_high:
             level.append(n)
@@ -118,6 +131,7 @@ def multi_threshold(frequency, volume, freq_center):
     #print('thresh = ' + str(thresh))
     return thresh
 
+
 def smoothed_threshold(frequency, volume, freq_center):
     out = []
     thresh = multi_threshold(frequency, volume, freq_center)
@@ -128,8 +142,10 @@ def smoothed_threshold(frequency, volume, freq_center):
         else:
             out.append(thresh[i])
     return out
-        
+
 # Berechnet das Terzband zur entsprechenden unteren-, oberen-, oder Mittenfrequenz
+
+
 def get_third_band(freq, param):
     if param == 'low':
         low = freq
@@ -145,13 +161,17 @@ def get_third_band(freq, param):
         center = freq
     return (low, center, high)
 
-# Bestimmung der Bandbreite eines Terzbandes mit einer bestimmten Mittenfrequenz        
+# Bestimmung der Bandbreite eines Terzbandes mit einer bestimmten Mittenfrequenz
+
+
 def bandwidth(freq_center):
     band = get_third_band(freq_center, 'center')
     width = band[2] - band[0]
     return width
 
 # Bestimmung der x- und y-Werte zum Einzeichnen der angegebenen Terzbänder
+
+
 def signal(freq_center, volume, xy):
     signals = []
     for i in range(len(freq_center)):
@@ -172,6 +192,8 @@ def signal(freq_center, volume, xy):
         return y
 
 # Aufteilen eines breitbandigen Signals in einzelne Terzen
+
+
 def cut_to_thirds(signal):
     start = get_third_band(signal[0], 'low')
     end = get_third_band(signal[1], 'high')

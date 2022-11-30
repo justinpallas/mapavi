@@ -1,3 +1,4 @@
+import json
 
 # Berechnung der Ruhehörschwelle von gegebenen Frequenzen
 def threshold_in_quiet(frequency):
@@ -122,6 +123,7 @@ def get_third_band(freq, param):
         else: 
             return list[n]
 
+# Unterteilung des Eingegebenen Signals in Terzbänder, welche in der thirds Liste enthalten sind.
 def cut_to_thirds(signal):
     start = get_third_band(signal[0], 'low')
     end = get_third_band(signal[1], 'high')
@@ -135,8 +137,34 @@ def cut_to_thirds(signal):
         thirds.append(thirds[n])
     return thirds
 
+# Generierung von x-Werten von 0 Hz bis 22000 Hz
 def samples():
         freqs = []
         for i in range(22000):
                 freqs.append(i)
         return freqs
+
+def measured_example(freq, spec):
+    if freq == 1000:
+        with open('./measured_data/2022-11-24 Messungen/2022-11-24_Justin_Pallas_links_MHS_SBR_1kHz.json', 'r') as read_file:
+            file = json.load(read_file)
+    elif freq == 4000:
+        with open('./measured_data/2022-11-24 Messungen/2022-11-24_Justin_Pallas_links_MHS_SBR_4kHz.json', 'r') as read_file:
+            file = json.load(read_file)
+    elif freq == 250:
+        with open('./measured_data/2022-11-24 Messungen/2022-11-24_Justin_Pallas_links_MHS_SBR_250Hz.json', 'r') as read_file:
+            file = json.load(read_file)
+    values = []
+    data = file['Data']
+    for key in data:
+        values.append(data[key])
+    if spec == 'all':
+        return values
+    else: 
+        freqs, levels, toggle = list(map(list, zip(*values)))
+        if spec == 'freq':
+            return freqs
+        elif spec == 'level':
+            return levels
+        elif spec == 'toggle':
+            return toggle

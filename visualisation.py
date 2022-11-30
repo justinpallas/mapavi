@@ -13,13 +13,19 @@ ax2 = axs[1]
 
 
 def render_plots(x, freq_center, volume):
+    thresh = calc.multi_threshold(x, volume, freq_center)
+    smoothed = calc.smoothed_threshold(x, volume, freq_center)
+    smoothing_line = calc.smoothing_line(x, volume, freq_center)
+    y = thresh
+    example = False
+
     # -- Diagramm für physikalisches Eingangssignal --
     # Allgemein
     ax1.grid(True)
     ax1.set_title("Darstellung in der Tonheit")
 
     # X-Achse
-    ax1.set_xlabel("Tonheit Z [Bark]")
+    ax1.set_xlabel("Tonheit z [Bark]")
     ax1.set_xlim([0, 24])
     # ax1.set_xscale('symlog')
     ax1.set_xticks([2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24])
@@ -38,17 +44,18 @@ def render_plots(x, freq_center, volume):
                       calc.signal(freq_center, volume, 'y'))
 
     # Versuch Darstellung MHS von SBR
-    thresh = calc.multi_threshold(x, volume, freq_center)
-    smoothed = calc.smoothed_threshold(x, volume, freq_center)
-    smoothing_line = calc.smoothing_line(x, volume, freq_center)
-    #line3, = ax1.plot(calc.conv_to_bark(x), thresh, 'r')
-    line3, = ax1.plot(calc.conv_to_bark(x), smoothed, 'g')
+    line3, = ax1.plot(calc.conv_to_bark(x), y, 'r')
+
+    # Darstellung der Ergebnisse des Hörversuchs vom 24.11.2022
+    if example != False:
+        line4, = ax1.plot(calc.conv_to_bark(data.measured_example(
+            example, 'freq')), data.measured_example(example, 'level'), 'g')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
     line2.set_label('Ermittelte Terzbänder')
     line3.set_label('Mithörschwelle')
-    #ax1.legend()
+    # ax1.legend()
 
     # -- Diagramm mit gehörgerechter Darstellung des Signals --
     # Allgemein
@@ -75,18 +82,21 @@ def render_plots(x, freq_center, volume):
                       calc.signal(freq_center, volume, 'y'))
 
     # Versuch Darstellung MHS von SBR
-    thresh = calc.multi_threshold(x, volume, freq_center)
-    smoothed = calc.smoothed_threshold(x, volume, freq_center)
-    smoothing_line = calc.smoothing_line(x, volume, freq_center)
-    #line3, = ax2.plot(x, thresh, 'r')
-    line3, = ax2.plot(x, smoothed, 'g')
-    #line5, = ax2.plot(x, smoothing_line, 'y')
+    line3, = ax2.plot(x, y, 'r')
+
+    # Darstellung der Ergebnisse des Hörversuchs vom 24.11.2022
+    if example != False:
+        line4, = ax2.plot(data.measured_example(example, 'freq'),
+                          data.measured_example(example, 'level'), 'g')
+        line4.set_label('Messwerte mit SBR bei fc = ' +
+                        str(example) + ' Hz als Maskierer')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
     line2.set_label('Ermittelte Terzbänder')
     line3.set_label('Mithörschwelle')
-    ax2.legend(loc='lower center', bbox_to_anchor=(0.5, -0.37), fancybox=True, shadow=True)
+    ax2.legend(loc='lower center', bbox_to_anchor=(
+        0.5, -0.37), fancybox=True, shadow=True)
 
 
 # -- Anzeigen der Diagramme --
