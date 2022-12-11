@@ -11,12 +11,11 @@ fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 9))
 ax1 = axs[0]
 ax2 = axs[1]
 
-
 def render_plots(x, freq_center, volume):
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
     smoothing_line = calc.smoothing_line(x, volume, freq_center)
-    y = thresh
+    y = smoothed
     example = False
 
     # -- Diagramm für physikalisches Eingangssignal --

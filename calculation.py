@@ -99,9 +99,9 @@ def threshold(frequency, volume, freq_center):
         level.append(i)
     return level
 
+
+
 # Berechnen der Gesamtmithörschwelle mehrerer Schmalbandrauschen
-
-
 def multi_threshold(frequency, volume, freq_center):
     levels = []
     for i in range(len(freq_center)):
@@ -143,35 +143,38 @@ def smoothed_threshold(frequency, volume, freq_center):
             out.append(thresh[i])
     return out
 
+
+
 # Berechnet das Terzband zur entsprechenden unteren-, oberen-, oder Mittenfrequenz
-
-
 def get_third_band(freq, param):
     if param == 'low':
-        low = freq
-        high = freq * 1.26
+        if freq == 0:
+            low = 0.001
+        else:
+            low = freq
+        high = low * 1.26
         center = low + ((high - low)/2)
     elif param == 'high':
-        low = freq / 1.26
         high = freq
+        low = high / 1.26
         center = low + ((high - low)/2)
     elif param == 'center':
-        low = (2*freq)/2.26
-        high = low * 1.26
         center = freq
+        low = (2*center)/2.26
+        high = low * 1.26
     return (low, center, high)
 
+
+
 # Bestimmung der Bandbreite eines Terzbandes mit einer bestimmten Mittenfrequenz
-
-
 def bandwidth(freq_center):
     band = get_third_band(freq_center, 'center')
     width = band[2] - band[0]
     return width
 
+
+
 # Bestimmung der x- und y-Werte zum Einzeichnen der angegebenen Terzbänder
-
-
 def signal(freq_center, volume, xy):
     signals = []
     for i in range(len(freq_center)):
@@ -191,9 +194,9 @@ def signal(freq_center, volume, xy):
     elif xy == 'y':
         return y
 
+
+
 # Aufteilen eines breitbandigen Signals in einzelne Terzen
-
-
 def cut_to_thirds(signal):
     start = get_third_band(signal[0], 'low')
     end = get_third_band(signal[1], 'high')
@@ -203,3 +206,23 @@ def cut_to_thirds(signal):
         curr_band = get_third_band(curr_band[2], 'low')
         thirds.append(curr_band)
     return thirds
+
+def get_volumes(type):
+    volumes = []
+    if type == 'pink':
+        for n in range(len(signal)):
+            thirds = cut_to_thirds(signal[n])
+            for z in thirds:
+                volumes.append(signal[n][2])
+    elif type == 'white':
+        for n in range(len(signal)):
+            thirds = cut_to_thirds(signal[n])
+            for z in thirds:
+                freq_high = z[2]
+                if freq_high <= 500:
+                    volumes.append(signal[n][2])
+                else:
+                    distance = len(cut_to_thirds((500, freq_high)))
+                    level = signal[n][2] + distance - 1
+                    volumes.append(level)
+    return volumes
