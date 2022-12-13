@@ -1,4 +1,5 @@
 import json
+import os, glob
 
 # Berechnung der Ruhehörschwelle von gegebenen Frequenzen
 def threshold_in_quiet(frequency):
@@ -168,3 +169,33 @@ def measured_example(freq, spec):
             return levels
         elif spec == 'toggle':
             return toggle
+
+def get_path(freq, volume):
+    if volume == 60:
+        if freq == -1:
+            path = './measured_data/threshold_in_quiet'
+        elif freq == 250:
+            path = './measured_data/nbn_250Hz_60dB'
+        elif freq == 1000:
+            path = './measured_data/nbn_1kHz_60dB'
+        elif freq == 4000:
+            path = './measured_data/nbn_4kHz_60dB'
+    elif volume == 40:
+        path == './measured_data/nbn_1kHz_40dB'
+    elif volume == 80:
+        path == './measured_data/nbn_1kHz_80dB'
+    return path
+
+def test_data(freq=-1, volume=60):
+    data = []
+    path = get_path(freq, volume)
+    print(path)
+    for filename in glob.glob(os.path.join(path, '*.json')):
+        with open(os.path.join(os.getcwd(), filename), 'r') as f:
+            file = json.load(f)
+            values = []
+            content = file['Data']
+            for key in content:
+                 values.append(content[key])
+            data.append(values)
+    return data

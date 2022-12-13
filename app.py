@@ -30,13 +30,12 @@ sig = []
 
 for n in range(len(freq_center)):
     sig.append((freq_center[n], volume[n]))
-print(sig)
+#print(sig)
 
 
 #x = np.geomspace(1, 20000, 100)
 x = data.samples()
 #x = [10, 100, 1000, 4000, 10000, 16000]
 
-#print(data.measured_example(4000, 'toggle'))
 graph.render_plots(x, freq_center, volume)
 graph.draw_plots()
