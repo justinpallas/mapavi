@@ -32,7 +32,7 @@ def octavefilter(x, fs, fraction=1, order=6, limits=None, show=0, sigbands =0):
     """
 
     if limits is None:
-        limits = [12, 20000]
+        limits = [16, 22000]
 
     # List type for signal var
     x = _typesignal(x)

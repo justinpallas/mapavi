@@ -11,11 +11,13 @@ fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 9))
 ax1 = axs[0]
 ax2 = axs[1]
 
+
 def render_plots(x, freq_center, volume):
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
     smoothing_line = calc.smoothing_line(x, volume, freq_center)
     y = smoothed
+    dBlim = 80
     example = False
 
     # -- Diagramm für physikalisches Eingangssignal --
@@ -32,7 +34,7 @@ def render_plots(x, freq_center, volume):
 
     # Y-Achse
     ax1.set_ylabel("Pegel L [dB]")
-    ax1.set_ylim([-10, 80])
+    ax1.set_ylim([-10, dBlim])
 
     # Darstellung der Ruhehörschwelle
     line1, = ax1.plot(calc.conv_to_bark(data.tiq_freq),
@@ -71,7 +73,7 @@ def render_plots(x, freq_center, volume):
 
     # Y-Achse
     ax2.set_ylabel("Pegel L [dB]")
-    ax2.set_ylim([-10, 80])
+    ax2.set_ylim([-10, dBlim])
 
     # Darstellung der Ruhehörschwelle
     line1, = ax2.plot(data.tiq_freq, data.tiq_level, 'k--')

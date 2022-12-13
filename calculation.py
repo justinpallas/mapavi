@@ -207,7 +207,7 @@ def cut_to_thirds(signal):
         thirds.append(curr_band)
     return thirds
 
-def get_volumes(type):
+def get_volumes(signal, type):
     volumes = []
     if type == 'pink':
         for n in range(len(signal)):

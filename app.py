@@ -4,16 +4,16 @@ import matplotlib.ticker as mticker
 import calculation as calc
 import visualisation as graph
 import data as data
-import signal_analysation as signal
+import signal_analysation as analyzed
 
 #params=(start_freq, end_freq, volume)
-params = [
-    (0, 1000, 60)
+signal = [
+    (0, 22000, 60)
 ]
-type = 'pink'  # white = weißes Rauschen, pink = rosa Rauschen
+type = 'white'  # white = weißes Rauschen, pink = rosa Rauschen
 
 thirds = []
-for i in params:
+for i in signal:
     cutted = calc.cut_to_thirds(i)
     for z in cutted:
         thirds.append(z)
@@ -21,12 +21,16 @@ low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
 
 
 #freq_center = center_freqs
-#freq_center = [250, 1000, 4000]  # Hz
-freq_center = signal.freqs()
-#volume = calc.get_volumes(type)
-#volume = [60, 60, 60]  # dB
-volume = signal.levels()
-print(volume)
+# freq_center = [250, 1000, 4000]  # Hz
+freq_center = analyzed.frequencies()
+#volume = calc.get_volumes(signal, type)
+# volume = [60, 60, 60]  # dB
+volume = analyzed.volumes()
+sig = []
+
+for n in range(len(freq_center)):
+    sig.append((freq_center[n], volume[n]))
+print(sig)
 
 
 #x = np.geomspace(1, 20000, 100)
