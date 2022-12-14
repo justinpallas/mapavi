@@ -1,5 +1,7 @@
 import json
 import os, glob
+from scipy.interpolate import interp1d
+import statistics
 
 # Berechnung der Ruhehörschwelle von gegebenen Frequenzen
 def threshold_in_quiet(frequency):
@@ -181,12 +183,12 @@ def get_path(freq, volume):
         elif freq == 4000:
             path = './measured_data/nbn_4kHz_60dB'
     elif volume == 40:
-        path == './measured_data/nbn_1kHz_40dB'
+        path = './measured_data/nbn_1kHz_40dB'
     elif volume == 80:
-        path == './measured_data/nbn_1kHz_80dB'
+        path = './measured_data/nbn_1kHz_80dB'
     return path
 
-def test_data(freq=-1, volume=60):
+def get_test_data(freq=-1, volume=60):
     data = []
     path = get_path(freq, volume)
     print(path)
@@ -199,3 +201,42 @@ def test_data(freq=-1, volume=60):
                  values.append(content[key])
             data.append(values)
     return data
+
+def find_mid_values(dataset):
+    values = []
+    for n in range(len(dataset)-1):
+        freq_mid = dataset[n][0] + (dataset[n+1][0] - dataset[n][0])
+        level_mid = dataset[n][1] + (dataset[n+1][1] - dataset[n][1])
+        mid = (freq_mid, level_mid)
+        values.append(mid)
+    return values
+
+def comparable_list(dataset):
+    comp = []
+    freqs, levels = list(map(list, zip(*dataset)))
+    f = interp1d(freqs, levels, kind='linear', bounds_error=False, fill_value=-100)
+    for i in thirds_all:
+        level = f(i)
+        comp.append((i, level))
+    return comp
+
+def median_data(freq=-1, volume=60):
+    median_levels = []
+    comps = []
+    freqs = []
+    data = get_test_data(freq, volume)
+    for i in data:
+        mid = find_mid_values(i)
+        comp = comparable_list(mid)
+        comps.append(comp)
+    for n in range(len(comps[0])):
+        levels = []
+        frequency = comps[0][n][0]
+        for z in range(len(comps)):
+            level = comps[z][n][1]
+            levels.append(level)
+        median = statistics.median(levels)
+        median_levels.append(median)
+        freqs.append(frequency)
+    return freqs, median_levels
+        

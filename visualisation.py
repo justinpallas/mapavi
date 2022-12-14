@@ -11,14 +11,15 @@ fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 9))
 ax1 = axs[0]
 ax2 = axs[1]
 
-
 def render_plots(x, freq_center, volume):
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
     smoothing_line = calc.smoothing_line(x, volume, freq_center)
-    y = smoothed
+    y = thresh
     dBlim = 80
-    example = False
+    example_freq = False
+    example_level = 60
+
 
     # -- Diagramm für physikalisches Eingangssignal --
     # Allgemein
@@ -38,7 +39,7 @@ def render_plots(x, freq_center, volume):
 
     # Darstellung der Ruhehörschwelle
     line1, = ax1.plot(calc.conv_to_bark(data.tiq_freq),
-                      data.tiq_level, 'k--')
+                      data.tiq_level, 'k--.')
 
     # Darstellung des bestimmten Terzbandes
     line2, = ax1.plot((calc.conv_to_bark(calc.signal(freq_center, volume, 'x'))),
@@ -48,9 +49,9 @@ def render_plots(x, freq_center, volume):
     line3, = ax1.plot(calc.conv_to_bark(x), y, 'r')
 
     # Darstellung der Ergebnisse des Hörversuchs vom 24.11.2022
-    if example != False:
+    if example_freq != False:
         line4, = ax1.plot(calc.conv_to_bark(data.measured_example(
-            example, 'freq')), data.measured_example(example, 'level'), 'g')
+            example_freq, 'freq')), data.measured_example(example_freq, 'level'), 'g')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
@@ -76,7 +77,7 @@ def render_plots(x, freq_center, volume):
     ax2.set_ylim([-10, dBlim])
 
     # Darstellung der Ruhehörschwelle
-    line1, = ax2.plot(data.tiq_freq, data.tiq_level, 'k--')
+    line1, = ax2.plot(data.tiq_freq, data.tiq_level, 'k--.')
 
     # Darstellung des bestimmten Terzbandes
     line2, = ax2.plot(calc.signal(freq_center, volume, 'x'),
@@ -86,11 +87,11 @@ def render_plots(x, freq_center, volume):
     line3, = ax2.plot(x, y, 'r')
 
     # Darstellung der Ergebnisse des Hörversuchs vom 24.11.2022
-    if example != False:
-        line4, = ax2.plot(data.measured_example(example, 'freq'),
-                          data.measured_example(example, 'level'), 'g')
+    if example_freq != False:
+        line4, = ax2.plot(data.measured_example(example_freq, 'freq'),
+                          data.measured_example(example_freq, 'level'), 'g')
         line4.set_label('Messwerte mit SBR bei fc = ' +
-                        str(example) + ' Hz als Maskierer')
+                        str(example_freq) + ' Hz und L =' + str(example_level) +  ' dB als Maskierer')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
@@ -99,6 +100,16 @@ def render_plots(x, freq_center, volume):
     ax2.legend(loc='lower center', bbox_to_anchor=(
         0.5, -0.37), fancybox=True, shadow=True)
 
+def show_test_data(freq, level):
+    freqs, levels = data.median_data(freq, level)
+
+    #Darstellung Tonheit
+    line4, = ax1.plot(calc.conv_to_bark(freqs), levels, 'g')
+    #Darstellung Frequenz
+    line4, = ax2.plot(freqs, levels, 'g', label='Messwerte mit SBR bei fc = ' + 
+    str(freq) + ' Hz und L =' + str(level) +  ' dB als Maskierer')
+    line4.set_label('Messwerte mit SBR bei fc = ' + 
+    str(freq) + ' Hz und L =' + str(level) +  ' dB als Maskierer')
 
 # -- Anzeigen der Diagramme --
 def draw_plots():
