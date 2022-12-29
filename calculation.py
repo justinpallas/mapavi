@@ -6,12 +6,15 @@ import data as data
 
 
 def conv_to_bark(frequency):
+    # Unterscheidung ob Liste oder einzelner Wert umgewandelt werden soll
     if type(frequency) is list:
+        # Umwandlung Liste von Frequenzwerten in Bark
         bark = []
         for i in frequency:
             x = ((26.81*i)/(1960+i))-0.53
             bark.append(x)
         return bark
+        # Umwandlung eines einzelnen Frequenzwertes in Bark
     else:
         bark = ((26.81*frequency)/(1960+frequency))-0.53
         return bark
@@ -20,15 +23,33 @@ def conv_to_bark(frequency):
 
 
 def conv_to_freq(bark):
+    # Unterscheidung ob Liste oder einzelner Wert umgewandelt werden soll
     if type(bark) is list:
+        # Umwandlung Liste von Barkwerten in Frequenz
         frequency = []
         for i in bark:
             x = (1960*(i+0.53))/(26.28-i)
             frequency.append(x)
         return frequency
     else:
+        # Umwandlung eines einzelnen Barkwerts in Frequenz
         frequency = (1960*(bark+0.53))/(26.28-bark)
         return frequency
+
+
+# Berechnung der Schallintensität eines gegebenen Schallpegels
+def intensity(level):
+    I_zero = 10**(-12)  # Bezugsschallintensität
+    if type(level) is list:
+        intensity = []
+        for i in level:
+            x = I_zero * (10**(i/10))
+            intensity.append(x)
+        return intensity
+    else:
+        intensity = I_zero * (10**(level/10))
+        return intensity
+
 
 # Berechnung des Verdeckungsmaßes av
 
@@ -36,6 +57,7 @@ def conv_to_freq(bark):
 def masking_index(frequency):
     index = -2 - math.log(1 + (frequency / 502)**2.5) / math.log(10)
     return index
+
 
 # Berechnung der einzelnen Flanken der Mithörschwelle
 
@@ -61,22 +83,29 @@ def calculate_threshold(frequency, volume, freq_center, group):
     return level
 
 
+# Berechnung einer Linie, welche durch alle Peaks der Mithörschwelle gezogen wird
+# um diese als Filter zur Glättung der Mithörschwelle zu verwenden
 def smoothing_line(frequency, volume, freq_center):
     level = []
     # Werte vor erster Mittenfrequenz festlegen
     for i in frequency:
         if i < freq_center[0]:
             level.append(-100)
+    # Ermitteln aller Peaks in der Mithörschwelle
     keys = []
     for i in range(len(freq_center)):
         keys.append(volume[i] + masking_index(freq_center[i]))
+    # Ermitteln der jeweiligen linearen Funktionen,
+    # welche die Verbindungslinien zwischen allen Peaks beschreiben
     for i in range(len(freq_center) - 1):
         m = (keys[i + 1] - keys[i])/(freq_center[i + 1] - freq_center[i])
         n = keys[i] - m * freq_center[i]
+        # Füllen der level-Liste mit y-Werten, die auf den entsprechenden Verbindungslinien liegen
         for z in frequency:
             if z >= freq_center[i] and z < freq_center[i + 1]:
                 y = m * z + n
                 level.append(y)
+    # Werte nach letzter Mittenfrequenz festlegen
     for i in frequency:
         if i >= freq_center[len(freq_center) - 1]:
             level.append(-100)
@@ -98,7 +127,6 @@ def threshold(frequency, volume, freq_center):
     for i in level_high:
         level.append(i)
     return level
-
 
 
 # Berechnen der Gesamtmithörschwelle mehrerer Schmalbandrauschen
@@ -144,7 +172,6 @@ def smoothed_threshold(frequency, volume, freq_center):
     return out
 
 
-
 # Berechnet das Terzband zur entsprechenden unteren-, oberen-, oder Mittenfrequenz
 def get_third_band(freq, param):
     if param == 'low':
@@ -165,13 +192,11 @@ def get_third_band(freq, param):
     return (low, center, high)
 
 
-
 # Bestimmung der Bandbreite eines Terzbandes mit einer bestimmten Mittenfrequenz
 def bandwidth(freq_center):
     band = get_third_band(freq_center, 'center')
     width = band[2] - band[0]
     return width
-
 
 
 # Bestimmung der x- und y-Werte zum Einzeichnen der angegebenen Terzbänder
@@ -180,11 +205,11 @@ def signal(freq_center, volume, xy):
     for i in range(len(freq_center)):
         band = get_third_band(freq_center[i], 'center')
         signal = [
-            (band[0], -10),
+            (band[0], -100),
             (band[0], volume[i]),
             (band[1], volume[i]),
             (band[2], volume[i]),
-            (band[2], -10)
+            (band[2], -100)
         ]
         for n in signal:
             signals.append(n)
@@ -193,7 +218,6 @@ def signal(freq_center, volume, xy):
         return x
     elif xy == 'y':
         return y
-
 
 
 # Aufteilen eines breitbandigen Signals in einzelne Terzen
@@ -206,6 +230,7 @@ def cut_to_thirds(signal):
         curr_band = get_third_band(curr_band[2], 'low')
         thirds.append(curr_band)
     return thirds
+
 
 def get_volumes(signal, type):
     volumes = []
