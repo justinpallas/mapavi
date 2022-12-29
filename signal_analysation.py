@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-import numpy as np
+import pandas as pd
 import math
 import calculation as calc
 import data as data
@@ -10,8 +10,23 @@ from scipy import signal
 import scipy.io
 import octave_filter as filter
 
+param = 'excel'
 
-def read_file():
+
+def read_excel():
+    df = pd.read_excel(
+        './artemis_data/white_noise.1_n Octave Spectrum (Filter).xlsx', header=12, usecols='A:B', skiprows=[13])
+    data = df.to_dict()
+    freqs = []
+    levels = []
+    for i in data['Hz']:
+        freqs.append(data['Hz'][i])
+    for i in data['dB(SPL)']:
+        levels.append(data['dB(SPL)'][i])
+    return levels, freqs
+
+
+def read_wav():
     data_dir = './sound_files'
     wav_fname = pjoin(data_dir, 'whitenoise_audition.wav')
 
@@ -23,22 +38,33 @@ def read_file():
     return spl, freq
 
 
+def read_file(param):
+    if param == 'wav':
+        spl, freq = read_wav()
+    elif param == 'excel':
+        spl, freq = read_excel()
+    return spl, freq
+
 # Zusammenfassung der Schallintensitäten aller Terzbänder innerhalb der jeweiligen Frequenzgruppenbänder für Frequenzen unterhalb 500 Hz
-def critical_bands():
-    spl, freq = read_file()
+
+
+def critical_bands(param):
+    spl, freq = read_file(param)
     I_zero = 10**(-12)
     log = 0
     levels = []
     freqs = []
     n = 0
-    border_freqs = [100, 200, 300, 400, 510]
+    border_freqs = [100, 200, 300, 400, 500]
     for i in border_freqs:
         band_freqs = []
         sum = 0
-        while freq[n] <= i:
+        while freq[n] < i:
             sum += calc.intensity(spl[n])
             band_freqs.append(freq[n])
             n += 1
+        if sum == 0:
+            sum = calc.intensity(spl[n-1])
         band_level = 10 * math.log10(sum/I_zero)
         for z in band_freqs:
             freqs.append(z)
@@ -50,7 +76,7 @@ def critical_bands():
     return freqs, levels
 
 
-freqs, levels = critical_bands()
+freqs, levels = critical_bands(param)
 
 
 def frequencies():
@@ -59,3 +85,6 @@ def frequencies():
 
 def volumes():
     return levels
+
+
+read_excel()

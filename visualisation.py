@@ -11,15 +11,15 @@ fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 9))
 ax1 = axs[0]
 ax2 = axs[1]
 
+
 def render_plots(x, freq_center, volume):
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
     smoothing_line = calc.smoothing_line(x, volume, freq_center)
-    y = thresh
+    y = smoothed
     dBlim = 80
     example_freq = False
     example_level = 60
-
 
     # -- Diagramm für physikalisches Eingangssignal --
     # Allgemein
@@ -45,7 +45,7 @@ def render_plots(x, freq_center, volume):
     line2, = ax1.plot((calc.conv_to_bark(calc.signal(freq_center, volume, 'x'))),
                       calc.signal(freq_center, volume, 'y'))
 
-    # Versuch Darstellung MHS von SBR
+    # Darstellung MHS von SBR
     line3, = ax1.plot(calc.conv_to_bark(x), y, 'r')
 
     # Darstellung der Ergebnisse des Hörversuchs vom 24.11.2022
@@ -83,7 +83,7 @@ def render_plots(x, freq_center, volume):
     line2, = ax2.plot(calc.signal(freq_center, volume, 'x'),
                       calc.signal(freq_center, volume, 'y'))
 
-    # Versuch Darstellung MHS von SBR
+    # Darstellung MHS von SBR
     line3, = ax2.plot(x, y, 'r')
 
     # Darstellung der Ergebnisse des Hörversuchs vom 24.11.2022
@@ -91,27 +91,28 @@ def render_plots(x, freq_center, volume):
         line4, = ax2.plot(data.measured_example(example_freq, 'freq'),
                           data.measured_example(example_freq, 'level'), 'g')
         line4.set_label('Messwerte mit SBR bei fc = ' +
-                        str(example_freq) + ' Hz und L =' + str(example_level) +  ' dB als Maskierer')
+                        str(example_freq) + ' Hz und L =' + str(example_level) + ' dB als Maskierer')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
     line2.set_label('Ermittelte Terzbänder')
     line3.set_label('Mithörschwelle')
-    ax2.legend(loc='lower center', bbox_to_anchor=(
-        0.5, -0.37), fancybox=True, shadow=True)
+
 
 def show_test_data(freq, level):
     freqs, levels = data.median_data(freq, level)
 
-    #Darstellung Tonheit
+    # Darstellung Tonheit
     line4, = ax1.plot(calc.conv_to_bark(freqs), levels, 'g')
-    #Darstellung Frequenz
-    line4, = ax2.plot(freqs, levels, 'g', label='Messwerte mit SBR bei fc = ' + 
-    str(freq) + ' Hz und L =' + str(level) +  ' dB als Maskierer')
-    line4.set_label('Messwerte mit SBR bei fc = ' + 
-    str(freq) + ' Hz und L =' + str(level) +  ' dB als Maskierer')
+    # Darstellung Frequenz
+    line4, = ax2.plot(freqs, levels, 'g', label=('Median der Messwerte mit SBR bei fc = ' +
+                      str(freq) + ' Hz und L =' + str(level) + ' dB als Maskierer'))
 
 # -- Anzeigen der Diagramme --
+
+
 def draw_plots():
+    ax2.legend(loc='lower center', bbox_to_anchor=(
+        0.5, -0.37), fancybox=True, shadow=True)
     fig.tight_layout()
     plt.show()
