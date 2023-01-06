@@ -1,6 +1,10 @@
 import tkinter
 import tkinter.messagebox
 import customtkinter
+import calculation as calc
+import visualisation as graph
+import data as data
+import signal_analysation as analyzed
 
 # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_appearance_mode("System")
@@ -12,6 +16,8 @@ customtkinter.set_widget_scaling(120/100)
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
+
+        self.plot_open = False
 
         # configure window
         self.title("MaPaVi - Masking Pattern Visualizer")
@@ -82,11 +88,15 @@ class App(customtkinter.CTk):
             tab_1, text='Pegel(L)\n in dB')
         self.tab_1_header_label_4.grid(
             row=0, column=3, padx=20, pady=(5, 20))
+        # Rauschtyp Auswahl
+        self.noise_selector = customtkinter.CTkOptionMenu(
+            tab_1, values=['white', 'GAR', 'GVR'])
+        self.noise_selector.grid(row=0, column=5, padx=20, pady=(5, 0))
         # Berechnen Button
         self.thirdbands_submit_button = customtkinter.CTkButton(
             tab_1, text='Mithörschwelle\n Berechnen', command=self.calculate_masking_pattern)
         self.thirdbands_submit_button.grid(
-            row=0, column=5, padx=20, pady=(5, 0))
+            row=1, column=5, padx=20, pady=(5, 0))
         # Frequenzband hinzufügen Button
         self.add_freqband_button = customtkinter.CTkButton(
             tab_1, text='+', command=self.add_freqband, fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
@@ -341,6 +351,7 @@ class App(customtkinter.CTk):
             state="disabled", text="Disabled CTkButton")
         self.appearance_mode_optionemenu.set("Dark")
         self.scaling_optionemenu.set("120%")
+        self.noise_selector.set('white')
 
     def open_input_dialog_event(self):
         dialog = customtkinter.CTkInputDialog(
@@ -403,8 +414,28 @@ class App(customtkinter.CTk):
                 self.add_freqband_button.configure(state='normal')
             self.freqband_count -= 1
 
-    def calculate_masking_pattern():
+    def calculate_masking_pattern(self):
+        graph.close_plots()
+        print('Berechne Mithörschwelle')
+        i = self.freqband_count
         signal = []
+        noise_type = self.noise_selector.get()
+        for n in range(i+1):
+            f1 = float(self.f1_entry_list[n].get())
+            f2 = float(self.f2_entry_list[n].get())
+            level = float(self.tab_1_level_entry_list[n].get())
+            if f1 <= f2:
+                signal.append((f1, f2, level))
+            else:
+                signal.append((f2, f1, level))
+        thirds = []
+        for i in signal:
+            cutted = calc.cut_to_thirds(i)
+            for z in cutted:
+                thirds.append(z)
+        low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
+        volume = calc.get_volumes(signal, noise_type)
+        graph.render_plots(data.samples(), center_freqs, volume)
 
 
 if __name__ == "__main__":

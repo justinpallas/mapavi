@@ -4,15 +4,13 @@ import matplotlib.ticker as mticker
 import calculation as calc
 import data as data
 
-fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 9))
-
-# ------ Graphische Darstellung --------
-
-ax1 = axs[0]
-ax2 = axs[1]
-
 
 def render_plots(x, freq_center, volume):
+    fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 9))
+
+    ax1 = axs[0]
+    ax2 = axs[1]
+
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
     smoothing_line = calc.smoothing_line(x, volume, freq_center)
@@ -98,6 +96,12 @@ def render_plots(x, freq_center, volume):
     line2.set_label('Ermittelte Terzbänder')
     line3.set_label('Mithörschwelle')
 
+# -- Anzeigen der Diagramme --
+    ax2.legend(loc='lower center', bbox_to_anchor=(
+        0.5, -0.37), fancybox=True, shadow=True)
+    fig.tight_layout()
+    plt.show()
+
 
 def show_test_data(freq, level):
     freqs, levels = data.median_data(freq, level)
@@ -108,11 +112,8 @@ def show_test_data(freq, level):
     line4, = ax2.plot(freqs, levels, 'g', label=('Median der Messwerte mit SBR bei fc = ' +
                       str(freq) + ' Hz und L =' + str(level) + ' dB als Maskierer'))
 
-# -- Anzeigen der Diagramme --
+# -- Schließen der Diagramme --
 
 
-def draw_plots():
-    ax2.legend(loc='lower center', bbox_to_anchor=(
-        0.5, -0.37), fancybox=True, shadow=True)
-    fig.tight_layout()
-    plt.show()
+def close_plots():
+    plt.close()
