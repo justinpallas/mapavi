@@ -55,7 +55,7 @@ def intensity(level):
 
 
 def masking_index(frequency):
-    index = -2 - math.log(1 + (frequency / 502)**2.5) / math.log(10)
+    index = -(-2 - math.log(1 + (frequency / 502)**2.5) / math.log(10))
     return index
 
 
@@ -78,7 +78,7 @@ def calculate_threshold(frequency, volume, freq_center, group):
     # Berechnung und Ausgabe des entsprechenden Pegels der Mithörschwelle
     level = []
     for i in range(len(bark)):
-        x = slope * (bark[i] - zero) + masking_index(freq_center)
+        x = slope * (bark[i] - zero) - masking_index(freq_center)
         level.append(x)
     return level
 
@@ -94,7 +94,7 @@ def smoothing_line(frequency, volume, freq_center):
     # Ermitteln aller Peaks in der Mithörschwelle
     keys = []
     for i in range(len(freq_center)):
-        keys.append(volume[i] + masking_index(freq_center[i]))
+        keys.append(volume[i] - masking_index(freq_center[i]))
     # Ermitteln der jeweiligen linearen Funktionen,
     # welche die Verbindungslinien zwischen allen Peaks beschreiben
     for i in range(len(freq_center) - 1):
@@ -220,7 +220,7 @@ def signal(freq_center, volume, xy):
         return y
 
 
-# Aufteilen eines breitbandigen Signals in einzelne Terzen
+# Aufteilen eines breitbandigen Signals in einzelne Terzbänder
 def cut_to_thirds(signal):
     start = get_third_band(signal[0], 'low')
     end = get_third_band(signal[1], 'high')
@@ -234,11 +234,20 @@ def cut_to_thirds(signal):
 
 def get_volumes(signal, type):
     volumes = []
-    if type == 'pink':
+    if type == 'GAR':  # gleichmäßig anregendes Rauschen
         for n in range(len(signal)):
             thirds = cut_to_thirds(signal[n])
             for z in thirds:
                 volumes.append(signal[n][2])
+    elif type == 'GVR':  # uniform masking noise / gleichmäßig verdeckendes Rauschen
+        for n in range(len(signal)):
+            thirds = cut_to_thirds(signal[n])
+            for z in thirds:
+                # das Verdeckungsmaß wird auf den Terzpegel addiert, um den entsprechenden Abzug
+                # bei der Mithörschwellenberechnung auszugleichen. Das Verdeckungsmaß beträgt bei tiefen Frequenzen 2 dB.
+                # Um die allgemeine Erhöhung um 2 dB auszugleichen, werden außerdem frequenzunabhängig 2 dB abgezogen.
+                level = signal[n][2] + masking_index(z[1]) - 2
+                volumes.append(level)
     elif type == 'white':
         for n in range(len(signal)):
             thirds = cut_to_thirds(signal[n])

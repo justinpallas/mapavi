@@ -13,6 +13,7 @@ import octave_filter as filter
 param = 'excel'
 
 
+# Die Terzpegel aus Excel-Datei auslesen, welche von Artemis generitert wurde
 def read_excel():
     df = pd.read_excel(
         './artemis_data/white_noise.1_n Octave Spectrum (Filter).xlsx', header=12, usecols='A:B', skiprows=[13])
@@ -26,6 +27,7 @@ def read_excel():
     return levels, freqs
 
 
+# Die Terzpegel mithilfe eines Terzfilters aus Wave Datei bestimmen
 def read_wav():
     data_dir = './sound_files'
     wav_fname = pjoin(data_dir, 'whitenoise_audition.wav')
@@ -38,6 +40,7 @@ def read_wav():
     return spl, freq
 
 
+# Bestimmung ob wav oder excel Datei gelesen werden soll
 def read_file(param):
     if param == 'wav':
         spl, freq = read_wav()
@@ -85,6 +88,3 @@ def frequencies():
 
 def volumes():
     return levels
-
-
-read_excel()

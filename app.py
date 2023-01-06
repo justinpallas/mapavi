@@ -8,9 +8,9 @@ import signal_analysation as analyzed
 
 #params=(start_freq, end_freq, volume)
 signal = [
-    (0, 100, 60),
+    (0, 20000, 60),
 ]
-type = 'white'  # white = weißes Rauschen, pink = rosa Rauschen
+type = 'white'  # white = weißes Rauschen, GAR = gleichmäßig anregendes Rauschen, GVR = gleichmäßig verdeckendes Rauschen
 
 thirds = []
 for i in signal:
@@ -19,13 +19,12 @@ for i in signal:
         thirds.append(z)
 low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
 
-
-#freq_center = center_freqs
+freq_center = center_freqs
 # freq_center = [4000]  # Hz
-freq_center = analyzed.frequencies()
-#volume = calc.get_volumes(signal, type)
+#freq_center = analyzed.frequencies()
+volume = calc.get_volumes(signal, type)
 # volume = [60]  # dB
-volume = analyzed.volumes()
+#volume = analyzed.volumes()
 
 sig = []
 for n in range(len(freq_center)):
