@@ -4,9 +4,8 @@ import matplotlib.ticker as mticker
 import calculation as calc
 import data as data
 
-
-def render_plots(x, freq_center, volume):
-    fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(8, 9))
+def render_plots(x, freq_center, volume, testdata=False, smooth=True):
+    fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(14, 15))
 
     ax1 = axs[0]
     ax2 = axs[1]
@@ -14,7 +13,10 @@ def render_plots(x, freq_center, volume):
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
     smoothing_line = calc.smoothing_line(x, volume, freq_center)
-    y = smoothed
+    if smooth == True:    
+        y = smoothed
+    else:
+        y = thresh
     dBlim = 80
     example_freq = False
     example_level = 60
@@ -96,21 +98,20 @@ def render_plots(x, freq_center, volume):
     line2.set_label('Ermittelte Terzbänder')
     line3.set_label('Mithörschwelle')
 
+    if testdata == True:
+        freqs, levels = data.median_data(freq_center, volume)
+
+        # Darstellung Tonheit
+        line4, = ax1.plot(calc.conv_to_bark(freqs), levels, 'g')
+        # Darstellung Frequenz
+        line4, = ax2.plot(freqs, levels, 'g', label=('Median der Messwerte mit SBR bei fc = ' +
+                        str(freq_center) + ' Hz und L =' + str(volume) + ' dB als Maskierer'))
+
 # -- Anzeigen der Diagramme --
     ax2.legend(loc='lower center', bbox_to_anchor=(
         0.5, -0.37), fancybox=True, shadow=True)
     fig.tight_layout()
     plt.show()
-
-
-def show_test_data(freq, level):
-    freqs, levels = data.median_data(freq, level)
-
-    # Darstellung Tonheit
-    line4, = ax1.plot(calc.conv_to_bark(freqs), levels, 'g')
-    # Darstellung Frequenz
-    line4, = ax2.plot(freqs, levels, 'g', label=('Median der Messwerte mit SBR bei fc = ' +
-                      str(freq) + ' Hz und L =' + str(level) + ' dB als Maskierer'))
 
 # -- Schließen der Diagramme --
 

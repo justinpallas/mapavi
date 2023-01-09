@@ -1,5 +1,8 @@
-import tkinter
+import tkinter as tk
 import tkinter.messagebox
+from tkinter.messagebox import showinfo
+from tkinter import ttk
+from tkinter import filedialog as fd
 import customtkinter
 import calculation as calc
 import visualisation as graph
@@ -94,7 +97,7 @@ class App(customtkinter.CTk):
         self.noise_selector.grid(row=0, column=5, padx=20, pady=(5, 0))
         # Berechnen Button
         self.thirdbands_submit_button = customtkinter.CTkButton(
-            tab_1, text='Mithörschwelle\n Berechnen', command=self.calculate_masking_pattern)
+            tab_1, text='Mithörschwelle\n Berechnen', command=self.calculate_from_signal)
         self.thirdbands_submit_button.grid(
             row=1, column=5, padx=20, pady=(5, 0))
         # Frequenzband hinzufügen Button
@@ -243,7 +246,7 @@ class App(customtkinter.CTk):
         self.tab_2_header_label_3.grid(row=0, column=2, padx=20, pady=(5, 20))
         # Berechnen Button
         self.thirdbands_submit_button = customtkinter.CTkButton(
-            tab_2, text='Mithörschwelle Berechnen')
+            tab_2, text='Mithörschwelle Berechnen', command=self.calculate_from_thirdband)
         self.thirdbands_submit_button.grid(
             row=0, column=4, padx=20, pady=(5, 0))
         # Terzband hinzufügen Button
@@ -346,6 +349,15 @@ class App(customtkinter.CTk):
         self.tab_2_level_entry_list = [self.tab_2_entry_level_1, self.tab_2_entry_level_2, self.tab_2_entry_level_3,
                                        self.tab_2_entry_level_4, self.tab_2_entry_level_5, self.tab_2_entry_level_6, self.tab_2_entry_level_7]
 
+        #Tab Datei Laden
+        tab_3 = self.tabview.tab("Datei Laden")
+        # Datei Laden button
+        self.load_file_button = customtkinter.CTkButton(tab_3, text='Datei auswählen', command=self.select_file)
+        self.load_file_button.grid(row=0, column=0, padx=20, pady=(5, 0))
+        # Mithörschwelle berechnen button
+        self.file_submit_button = customtkinter.CTkButton(tab_3, text='Mithörschwelle berechnen', command=self.calculate_from_file)
+        self.file_submit_button.grid(row=0, column=5, padx=20, pady=(5, 0))
+
         # set default values
         self.sidebar_button_3.configure(
             state="disabled", text="Disabled CTkButton")
@@ -414,7 +426,7 @@ class App(customtkinter.CTk):
                 self.add_freqband_button.configure(state='normal')
             self.freqband_count -= 1
 
-    def calculate_masking_pattern(self):
+    def calculate_from_signal(self):
         graph.close_plots()
         print('Berechne Mithörschwelle')
         i = self.freqband_count
@@ -436,6 +448,41 @@ class App(customtkinter.CTk):
         low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
         volume = calc.get_volumes(signal, noise_type)
         graph.render_plots(data.samples(), center_freqs, volume)
+
+    def calculate_from_thirdband(self):
+        graph.close_plots()
+        print('Berechne Mithörschwelle')
+        i = self.thirdband_count
+        freqs = []
+        levels = []
+        for n in range(i+1):
+            fc = float(self.fc_entry_list[n].get())
+            level = float(self.tab_2_level_entry_list[n].get())
+            freqs.append(fc)
+            levels.append(level)
+        graph.render_plots(data.samples(), freqs, levels, smooth=False)
+
+    def calculate_from_file(self):
+        graph.close_plots()
+        freqs, levels = analyzed.load_file(self.filename)
+        graph.render_plots(data.samples(), freqs, levels)
+
+    def select_file(self):
+        filetypes = (
+            ('audio files', '*.wav'),
+            ('Excel files', '*.xl*')
+        )
+
+        self.filename = fd.askopenfilename(
+            title='Datei auswählen',
+            initialdir='/',
+            filetypes=filetypes
+        )
+
+        showinfo(
+            title='Ausgewählte Datei',
+            message=self.filename
+        )
 
 
 if __name__ == "__main__":

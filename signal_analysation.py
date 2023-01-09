@@ -14,9 +14,9 @@ param = 'excel'
 
 
 # Die Terzpegel aus Excel-Datei auslesen, welche von Artemis generitert wurde
-def read_excel():
+def read_excel(filename):
     df = pd.read_excel(
-        './artemis_data/white_noise.1_n Octave Spectrum (Filter).xlsx', header=12, usecols='A:B', skiprows=[13])
+        filename, header=12, usecols='A:B', skiprows=[13])
     data = df.to_dict()
     freqs = []
     levels = []
@@ -28,11 +28,8 @@ def read_excel():
 
 
 # Die Terzpegel mithilfe eines Terzfilters aus Wave Datei bestimmen
-def read_wav():
-    data_dir = './sound_files'
-    wav_fname = pjoin(data_dir, 'whitenoise_audition.wav')
-
-    samplerate, data = wavfile.read(wav_fname)
+def read_wav(filename):
+    samplerate, data = wavfile.read(filename)
     length = data.shape[0] / samplerate
     level = data
 
@@ -51,8 +48,7 @@ def read_file(param):
 # Zusammenfassung der Schallintensitäten aller Terzbänder innerhalb der jeweiligen Frequenzgruppenbänder für Frequenzen unterhalb 500 Hz
 
 
-def critical_bands(param):
-    spl, freq = read_file(param)
+def critical_bands(spl, freq):
     I_zero = 10**(-12)
     log = 0
     levels = []
@@ -78,13 +74,11 @@ def critical_bands(param):
         n += 1
     return freqs, levels
 
-
-freqs, levels = critical_bands(param)
-
-
-def frequencies():
-    return freqs
-
-
-def volumes():
-    return levels
+def load_file(filename):
+    if filename.endswith('.wav'):
+        spl, freq = read_wav(filename)
+    elif filename.endswith('.xlsx'):
+        spl, freq = read_excel(filename)
+    freqs, levels = critical_bands(spl, freq)
+    return freqs, levels
+        
