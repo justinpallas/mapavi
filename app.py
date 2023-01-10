@@ -358,16 +358,18 @@ class App(customtkinter.CTk):
         # Datei Laden button
         self.load_file_button = customtkinter.CTkButton(tab_3, text='Datei auswählen', command=self.select_file)
         self.load_file_button.grid(row=1, column=0, padx=20, pady=(50, 0))
-        self.selected_file_label = customtkinter.CTkLabel(tab_3, text='Datei ausgewählt:\n keine')
-        self.selected_file_label.grid(row=2, column=0, padx=20, pady=(10, 0))
+        self.file_label = customtkinter.CTkLabel(tab_3, text='Datei ausgewählt:')
+        self.file_label.grid(row=2, column=0, padx=20, pady=(10, 0))
+        self.selected_file_label = customtkinter.CTkLabel(tab_3, text='keine', fg_color=['grey95', 'grey10'], text_color=['grey40', 'grey60'], corner_radius=8)
+        self.selected_file_label.grid(row=3, column=0, padx=20, pady=(5, 0))
         # Mithörschwelle berechnen button
         self.file_submit_button = customtkinter.CTkButton(tab_3, text='Mithörschwelle berechnen', command=self.calculate_from_file)
-        self.file_submit_button.grid(row=3, column=0, padx=20, pady=(100, 0))
+        self.file_submit_button.grid(row=4, column=0, padx=20, pady=(100, 0))
 
         # set default values
         self.sidebar_button_3.configure(
             state="disabled", text="Disabled CTkButton")
-        self.appearance_mode_optionemenu.set("Dark")
+        self.appearance_mode_optionemenu.set("System")
         self.scaling_optionemenu.set("120%")
         self.noise_selector.set('white')
 
@@ -494,7 +496,7 @@ class App(customtkinter.CTk):
             filetypes=filetypes
         )
 
-        self.selected_file_label.configure(text='Datei ausgewählt:\n ' + self.filename)
+        self.selected_file_label.configure(text=self.filename)
 
 
 if __name__ == "__main__":
