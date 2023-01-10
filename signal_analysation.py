@@ -10,9 +10,6 @@ from scipy import signal
 import scipy.io
 import PyOctaveBand as filter
 
-param = 'excel'
-
-
 # Die Terzpegel aus Excel-Datei auslesen, welche von Artemis generitert wurde
 def read_excel(filename):
     df = pd.read_excel(
@@ -34,15 +31,6 @@ def read_wav(filename):
     level = data
 
     spl, freq = filter.octavefilter(level, fs=samplerate, fraction=3, order=6)
-    return spl, freq
-
-
-# Bestimmung ob wav oder excel Datei gelesen werden soll
-def read_file(param):
-    if param == 'wav':
-        spl, freq = read_wav()
-    elif param == 'excel':
-        spl, freq = read_excel()
     return spl, freq
 
 # Zusammenfassung der Schallintensitäten aller Terzbänder innerhalb der jeweiligen Frequenzgruppenbänder für Frequenzen unterhalb 500 Hz

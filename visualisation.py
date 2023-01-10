@@ -4,22 +4,28 @@ import matplotlib.ticker as mticker
 import calculation as calc
 import data as data
 
+# Erstellen der Diagramme
+    # x -> X-Werte
+    # freq_center -> Liste Mit Terzband-Mittenfrequenzen
+    # volume -> Liste mit Terzpegeln
+    # testdata -> False: Daten aus Hörversuchen nicht anzeigen | True: Daten aus Hörversuchen anzeigen (funktioniert nur, wenn zur Kombination aus freq_center und volume Testdaten vorliegen)
+    # smooth -> False: keine "Glättung" der Mithörschwelle (Für einzelne Terzbänder) | True: "Glättung" der Mithörschwelle
+    # example_freq -> False: kein Frequenzband aus Testdaten gewählt | 
 def render_plots(x, freq_center, volume, testdata=False, smooth=True):
     fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(14, 15))
 
     ax1 = axs[0]
     ax2 = axs[1]
 
+    # Festlegung, ob der Graph "geglättet" werden soll, oder nicht
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
-    smoothing_line = calc.smoothing_line(x, volume, freq_center)
     if smooth == True:    
         y = smoothed
     else:
         y = thresh
-    dBlim = 80
-    example_freq = False
-    example_level = 60
+    # Obergrenze für Pegel in Dagrammen in dB
+    dBlim = 80 
 
     # -- Diagramm für physikalisches Eingangssignal --
     # Allgemein
@@ -47,11 +53,6 @@ def render_plots(x, freq_center, volume, testdata=False, smooth=True):
 
     # Darstellung MHS von SBR
     line3, = ax1.plot(calc.conv_to_bark(x), y, 'r')
-
-    # Darstellung der Ergebnisse des Hörversuchs vom 24.11.2022
-    if example_freq != False:
-        line4, = ax1.plot(calc.conv_to_bark(data.measured_example(
-            example_freq, 'freq')), data.measured_example(example_freq, 'level'), 'g')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
@@ -85,13 +86,6 @@ def render_plots(x, freq_center, volume, testdata=False, smooth=True):
 
     # Darstellung MHS von SBR
     line3, = ax2.plot(x, y, 'r')
-
-    # Darstellung der Ergebnisse des Hörversuchs vom 24.11.2022
-    if example_freq != False:
-        line4, = ax2.plot(data.measured_example(example_freq, 'freq'),
-                          data.measured_example(example_freq, 'level'), 'g')
-        line4.set_label('Messwerte mit SBR bei fc = ' +
-                        str(example_freq) + ' Hz und L =' + str(example_level) + ' dB als Maskierer')
 
     # Beschriftung der Graphen
     line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')

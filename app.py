@@ -378,8 +378,9 @@ class App(customtkinter.CTk):
         customtkinter.set_widget_scaling(new_scaling_float)
 
     def sidebar_button_event(self):
-        print('hi')
+        print('test')
 
+    # Hinzufügen der Eingabefelder für ein weiteres Terzband
     def add_thirdband(self):
         if self.thirdband_count < 6:
             self.thirdband_count += 1
@@ -391,6 +392,7 @@ class App(customtkinter.CTk):
             if self.thirdband_count > 0:
                 self.remove_thirdband_button.configure(state='normal')
 
+    # Entfernen der Eingabefelder für das zuletzt hinzugefügte Terzband
     def remove_thirdband(self):
         if self.thirdband_count > 0:
             self.thirdband_label_list[self.thirdband_count].grid_remove()
@@ -402,6 +404,7 @@ class App(customtkinter.CTk):
                 self.add_thirdband_button.configure(state='normal')
             self.thirdband_count -= 1
 
+    # Hinzufügen der Eingabefelder für ein weiteres Frequenzband
     def add_freqband(self):
         if self.freqband_count < 6:
             self.freqband_count += 1
@@ -414,6 +417,7 @@ class App(customtkinter.CTk):
             if self.freqband_count > 0:
                 self.remove_freqband_button.configure(state='normal')
 
+    # Entfernen der Eingabefelder für das zuletzt hinzugefügte Frequenzband
     def remove_freqband(self):
         if self.freqband_count > 0:
             self.freqband_label_list[self.freqband_count].grid_remove()
@@ -426,6 +430,7 @@ class App(customtkinter.CTk):
                 self.add_freqband_button.configure(state='normal')
             self.freqband_count -= 1
 
+    # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Frequenzbändern
     def calculate_from_signal(self):
         graph.close_plots()
         print('Berechne Mithörschwelle')
@@ -449,6 +454,7 @@ class App(customtkinter.CTk):
         volume = calc.get_volumes(signal, noise_type)
         graph.render_plots(data.samples(), center_freqs, volume)
 
+    # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Terzbändern
     def calculate_from_thirdband(self):
         graph.close_plots()
         print('Berechne Mithörschwelle')
@@ -462,11 +468,13 @@ class App(customtkinter.CTk):
             levels.append(level)
         graph.render_plots(data.samples(), freqs, levels, smooth=False)
 
+    # Berechnen und Anzeigen der Mithörschwelle aus der geladenen Datei
     def calculate_from_file(self):
         graph.close_plots()
         freqs, levels = analyzed.load_file(self.filename)
         graph.render_plots(data.samples(), freqs, levels)
 
+    # Auswahl einer Datei zum Berechnen
     def select_file(self):
         filetypes = (
             ('audio files', '*.wav'),

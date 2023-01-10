@@ -158,33 +158,7 @@ def samples():
         freqs.append(i)
     return freqs
 
-
-def measured_example(freq, spec):
-    if freq == 1000:
-        with open('./measured_data/2022-11-24 Messungen/2022-11-24_Justin_Pallas_links_MHS_SBR_1kHz.json', 'r') as read_file:
-            file = json.load(read_file)
-    elif freq == 4000:
-        with open('./measured_data/2022-11-24 Messungen/2022-11-24_Justin_Pallas_links_MHS_SBR_4kHz.json', 'r') as read_file:
-            file = json.load(read_file)
-    elif freq == 250:
-        with open('./measured_data/2022-11-24 Messungen/2022-11-24_Justin_Pallas_links_MHS_SBR_250Hz.json', 'r') as read_file:
-            file = json.load(read_file)
-    values = []
-    data = file['Data']
-    for key in data:
-        values.append(data[key])
-    if spec == 'all':
-        return values
-    else:
-        freqs, levels, toggle = list(map(list, zip(*values)))
-        if spec == 'freq':
-            return freqs
-        elif spec == 'level':
-            return levels
-        elif spec == 'toggle':
-            return toggle
-
-
+# Entsprechenden Ordner für Ergebnisse aus den Hörversuchen auswählen
 def get_path(freq, volume):
     if volume == 60:
         if freq == -1:
@@ -201,7 +175,7 @@ def get_path(freq, volume):
         path = './measured_data/nbn_1kHz_80dB'
     return path
 
-
+# Test Daten aus allen JSON-Dateien im entsprechenden Ordner auslesen
 def get_test_data(freq=-1, volume=60):
     data = []
     path = get_path(freq, volume)
@@ -216,7 +190,7 @@ def get_test_data(freq=-1, volume=60):
             data.append(values)
     return data
 
-
+# die Mitten aus den entsprechenden Hoch- und Tief-Werten berechnen
 def find_mid_values(dataset):
     values = []
     for n in range(len(dataset)-1):
@@ -226,7 +200,7 @@ def find_mid_values(dataset):
         values.append(mid)
     return values
 
-
+# Liste vergleichbar machen mithilfe von Interpolation und festen Frequenzwerten (aus der thirds_all Liste)
 def comparable_list(dataset):
     comp = []
     freqs, levels = list(map(list, zip(*dataset)))
@@ -237,7 +211,7 @@ def comparable_list(dataset):
         comp.append((i, level))
     return comp
 
-
+# Berechnung des Medians der Pegel aus allen vergleichbaren Listen
 def median_data(freq=-1, volume=60):
     median_levels = []
     comps = []
