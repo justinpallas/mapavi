@@ -438,6 +438,15 @@ class App(customtkinter.CTk):
                 self.add_freqband_button.configure(state='normal')
             self.freqband_count -= 1
 
+    def validate(self, string):
+        error = False
+        msg = ''
+        if string == '':
+            error = True
+            msg = 'Ein oder mehrere Felder sind leer!\n Alle Felder müssen ausgefüllt sein!'
+        return error, msg
+
+
     # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Frequenzbändern
     def calculate_from_signal(self):
         graph.close_plots()
@@ -446,22 +455,34 @@ class App(customtkinter.CTk):
         signal = []
         noise_type = self.noise_selector.get()
         for n in range(i+1):
-            f1 = float(self.f1_entry_list[n].get())
-            f2 = float(self.f2_entry_list[n].get())
-            level = float(self.tab_1_level_entry_list[n].get())
-            if f1 <= f2:
-                signal.append((f1, f2, level))
-            else:
-                signal.append((f2, f1, level))
-        filled = calc.fill_signal(signal)
-        thirds = []
-        for i in filled:
-            cutted = calc.cut_to_thirds(i)
-            for z in cutted:
-                thirds.append(z)
-        low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
-        volume = calc.get_volumes(filled, noise_type)
-        graph.render_plots(data.samples(), center_freqs, volume)
+            f1_entry = self.f1_entry_list[n].get()
+            error, msg = self.validate(f1_entry)
+            f2_entry = self.f2_entry_list[n].get()
+            error, msg = self.validate(f2_entry)
+            level_entry = self.tab_1_level_entry_list[n].get()
+            error, msg = self.validate(level_entry)
+            if error == False:
+                f1 = float(f1_entry)
+                f2 = float(f2_entry)
+                level = float(level_entry)
+                if f1 <= f2:
+                    signal.append((f1, f2, level))
+                else:
+                    signal.append((f2, f1, level))
+        if error == False:
+            filled = calc.fill_signal(signal)
+            thirds = []
+            for i in filled:
+                cutted = calc.cut_to_thirds(i)
+                for z in cutted:
+                    thirds.append(z)
+            low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
+            volume = calc.get_volumes(filled, noise_type)
+            self.error_message.grid_remove()
+            graph.render_plots(data.samples(), center_freqs, volume)
+        else: 
+            self.error_message = customtkinter.CTkLabel(self.tabview.tab('Breitbandiges Signal'), text=msg, text_color='red')
+            self.error_message.grid(row=2, column=5, padx=20, pady=(5, 0))
 
     # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Terzbändern
     def calculate_from_thirdband(self):
@@ -471,11 +492,22 @@ class App(customtkinter.CTk):
         freqs = []
         levels = []
         for n in range(i+1):
-            fc = float(self.fc_entry_list[n].get())
-            level = float(self.tab_2_level_entry_list[n].get())
-            freqs.append(fc)
-            levels.append(level)
-        graph.render_plots(data.samples(), freqs, levels, smooth=False)
+            fc_entry = self.fc_entry_list[n].get()
+            error, msg = self.validate(fc_entry)
+            level_entry = self.tab_2_level_entry_list[n].get()
+            error, msg = self.validate(level_entry)
+            if error == False:
+                fc = float(fc_entry)
+                level = float(level_entry)
+                freqs.append(fc)
+                levels.append(level)
+        if error == False:
+            self.error_message.grid_remove()
+            graph.render_plots(data.samples(), freqs, levels, smooth=False)
+        else: 
+            self.error_message = customtkinter.CTkLabel(self.tabview.tab('Einzelne Terzbänder'), text=msg, text_color='red')
+            self.error_message.grid(row=1, column=4, padx=20, pady=(5, 0))
+    
 
     # Berechnen und Anzeigen der Mithörschwelle aus der geladenen Datei
     def calculate_from_file(self):
