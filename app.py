@@ -445,13 +445,14 @@ class App(customtkinter.CTk):
                 signal.append((f1, f2, level))
             else:
                 signal.append((f2, f1, level))
+        filled = calc.fill_signal(signal)
         thirds = []
-        for i in signal:
+        for i in filled:
             cutted = calc.cut_to_thirds(i)
             for z in cutted:
                 thirds.append(z)
         low_freqs, center_freqs, high_freqs = list(map(list, zip(*thirds)))
-        volume = calc.get_volumes(signal, noise_type)
+        volume = calc.get_volumes(filled, noise_type)
         graph.render_plots(data.samples(), center_freqs, volume)
 
     # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Terzbändern

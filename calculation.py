@@ -160,6 +160,7 @@ def multi_threshold(frequency, volume, freq_center):
     return thresh
 
 
+# Berechnung der "geglätteten" Mithörschwelle mithilfe der smoothing_line
 def smoothed_threshold(frequency, volume, freq_center):
     out = []
     thresh = multi_threshold(frequency, volume, freq_center)
@@ -231,7 +232,7 @@ def cut_to_thirds(signal):
         thirds.append(curr_band)
     return thirds
 
-
+# Terzpegel für die entsprechende Art von Rauschen generieren
 def get_volumes(signal, type):
     volumes = []
     if type == 'GAR':  # gleichmäßig anregendes Rauschen
@@ -260,3 +261,13 @@ def get_volumes(signal, type):
                     level = signal[n][2] + distance - 1
                     volumes.append(level)
     return volumes
+
+# Lücken im Signal mit Pegeln bei -100 füllen, damit die GLättung richtig funktioniert
+def fill_signal(signal):
+    filled_signal = []
+    filled_signal.append(signal[0])
+    for n in range(len(signal)-1):
+        if signal[n+1][0] > signal[n][1]:
+            filled_signal.append((signal[n][1], signal[n+1][0], -100))
+        filled_signal.append(signal[n+1])
+    return filled_signal
