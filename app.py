@@ -73,6 +73,7 @@ class App(customtkinter.CTk):
             4, weight=1)  # configure grid of individual tabs
         self.tabview.tab(
             'Einzelne Terzbänder').grid_columnconfigure(3, weight=1)
+        self.tabview.tab('Datei Laden').grid_columnconfigure(0, weight=1)
 
         # Tab Breitbandiges Signal
         tab_1 = self.tabview.tab("Breitbandiges Signal")
@@ -351,12 +352,17 @@ class App(customtkinter.CTk):
 
         #Tab Datei Laden
         tab_3 = self.tabview.tab("Datei Laden")
+        self.tab_3_header_label_1 = customtkinter.CTkLabel(
+            tab_3, text='Datei zur Berechnung der Mithörschwelle auswählen (WAV- oder Excel-Datei)')
+        self.tab_3_header_label_1.grid(row=0, column=0, padx=20, pady=(5, 20))
         # Datei Laden button
         self.load_file_button = customtkinter.CTkButton(tab_3, text='Datei auswählen', command=self.select_file)
-        self.load_file_button.grid(row=0, column=0, padx=20, pady=(5, 0))
+        self.load_file_button.grid(row=1, column=0, padx=20, pady=(50, 0))
+        self.selected_file_label = customtkinter.CTkLabel(tab_3, text='Datei ausgewählt:\n keine')
+        self.selected_file_label.grid(row=2, column=0, padx=20, pady=(10, 0))
         # Mithörschwelle berechnen button
         self.file_submit_button = customtkinter.CTkButton(tab_3, text='Mithörschwelle berechnen', command=self.calculate_from_file)
-        self.file_submit_button.grid(row=0, column=5, padx=20, pady=(5, 0))
+        self.file_submit_button.grid(row=3, column=0, padx=20, pady=(100, 0))
 
         # set default values
         self.sidebar_button_3.configure(
@@ -488,10 +494,7 @@ class App(customtkinter.CTk):
             filetypes=filetypes
         )
 
-        showinfo(
-            title='Ausgewählte Datei',
-            message=self.filename
-        )
+        self.selected_file_label.configure(text='Datei ausgewählt:\n ' + self.filename)
 
 
 if __name__ == "__main__":
