@@ -262,7 +262,7 @@ def get_volumes(signal, type):
                     volumes.append(level)
     return volumes
 
-# Lücken im Signal mit Pegeln bei -100 füllen, damit die GLättung richtig funktioniert
+# Lücken im Signal mit Pegeln bei -100 dB füllen, damit die GLättung richtig funktioniert
 def fill_signal(signal):
     filled_signal = []
     filled_signal.append(signal[0])
