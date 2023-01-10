@@ -366,6 +366,9 @@ class App(customtkinter.CTk):
         self.file_submit_button = customtkinter.CTkButton(tab_3, text='Mithörschwelle berechnen', command=self.calculate_from_file)
         self.file_submit_button.grid(row=4, column=0, padx=20, pady=(100, 0))
 
+        # Fehlermeldung
+        self.error_message = customtkinter.CTkLabel(self, text='', text_color='red')
+
         # set default values
         self.sidebar_button_3.configure(
             state="disabled", text="Disabled CTkButton")
@@ -438,14 +441,21 @@ class App(customtkinter.CTk):
                 self.add_freqband_button.configure(state='normal')
             self.freqband_count -= 1
 
-    def validate(self, string):
+    def validate(self, string_list):
         error = False
         msg = ''
-        if string == '':
-            error = True
-            msg = 'Ein oder mehrere Felder sind leer!\n Alle Felder müssen ausgefüllt sein!'
+        for i in string_list:
+            if i.isspace():
+                error = True
+                msg = 'Ein oder mehrere Felder sind leer!\n Alle Felder müssen ausgefüllt sein!'
+            elif i.isnumeric() == False:
+                error = True
+                msg = 'Ein oder mehrere Felder enthalten ungültige Werte! Bitte nur Zahlen eingeben!'
         return error, msg
 
+    def show_error(self, msg):
+        self.error_message.configure(text=msg)
+        self.error_message.grid(row=1, column=1, padx=20, pady=(5, 0))
 
     # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Frequenzbändern
     def calculate_from_signal(self):
@@ -456,11 +466,9 @@ class App(customtkinter.CTk):
         noise_type = self.noise_selector.get()
         for n in range(i+1):
             f1_entry = self.f1_entry_list[n].get()
-            error, msg = self.validate(f1_entry)
             f2_entry = self.f2_entry_list[n].get()
-            error, msg = self.validate(f2_entry)
             level_entry = self.tab_1_level_entry_list[n].get()
-            error, msg = self.validate(level_entry)
+            error, msg = self.validate((f1_entry, f2_entry, level_entry))
             if error == False:
                 f1 = float(f1_entry)
                 f2 = float(f2_entry)
@@ -481,8 +489,7 @@ class App(customtkinter.CTk):
             self.error_message.grid_remove()
             graph.render_plots(data.samples(), center_freqs, volume)
         else: 
-            self.error_message = customtkinter.CTkLabel(self.tabview.tab('Breitbandiges Signal'), text=msg, text_color='red')
-            self.error_message.grid(row=2, column=5, padx=20, pady=(5, 0))
+           self.show_error(msg)
 
     # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Terzbändern
     def calculate_from_thirdband(self):
@@ -493,9 +500,8 @@ class App(customtkinter.CTk):
         levels = []
         for n in range(i+1):
             fc_entry = self.fc_entry_list[n].get()
-            error, msg = self.validate(fc_entry)
             level_entry = self.tab_2_level_entry_list[n].get()
-            error, msg = self.validate(level_entry)
+            error, msg = self.validate((fc_entry,level_entry))
             if error == False:
                 fc = float(fc_entry)
                 level = float(level_entry)
@@ -505,8 +511,7 @@ class App(customtkinter.CTk):
             self.error_message.grid_remove()
             graph.render_plots(data.samples(), freqs, levels, smooth=False)
         else: 
-            self.error_message = customtkinter.CTkLabel(self.tabview.tab('Einzelne Terzbänder'), text=msg, text_color='red')
-            self.error_message.grid(row=1, column=4, padx=20, pady=(5, 0))
+            self.show_error(msg)
     
 
     # Berechnen und Anzeigen der Mithörschwelle aus der geladenen Datei
