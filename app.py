@@ -102,11 +102,11 @@ class App(customtkinter.CTk):
             row=1, column=5, padx=20, pady=(5, 0))
         # Frequenzband hinzufügen Button
         self.add_freqband_button = customtkinter.CTkButton(
-            tab_1, text='+', command=self.add_freqband, fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
+            tab_1, text='Band hinzufügen\n (+)', command=self.add_freqband, fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
         self.add_freqband_button.grid(row=9, column=0, padx=20, pady=(30, 0))
         # Frequenzband entfernen Button
         self.remove_freqband_button = customtkinter.CTkButton(
-            tab_1, text='-', command=self.remove_freqband, state='disabled', fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
+            tab_1, text='Band entfernen \n (-)', command=self.remove_freqband, state='disabled', fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
         self.remove_freqband_button.grid(
             row=9, column=1, padx=20, pady=(30, 0))
         # Freqband label
@@ -239,10 +239,10 @@ class App(customtkinter.CTk):
             tab_2, text='Terzband')
         self.tab_2_header_label_1.grid(row=0, column=0, padx=20, pady=(5, 20))
         self.tab_2_header_label_2 = customtkinter.CTkLabel(
-            tab_2, text='Mittenfrequenz (fc)')
+            tab_2, text='Mittenfrequenz (fc)\n in Hz')
         self.tab_2_header_label_2.grid(row=0, column=1, padx=20, pady=(5, 20))
         self.tab_2_header_label_3 = customtkinter.CTkLabel(
-            tab_2, text='Pegel (L)')
+            tab_2, text='Pegel (L)\n in dB')
         self.tab_2_header_label_3.grid(row=0, column=2, padx=20, pady=(5, 20))
         # Berechnen Button
         self.thirdbands_submit_button = customtkinter.CTkButton(
@@ -251,11 +251,11 @@ class App(customtkinter.CTk):
             row=0, column=4, padx=20, pady=(5, 0))
         # Terzband hinzufügen Button
         self.add_thirdband_button = customtkinter.CTkButton(
-            tab_2, text='+', command=self.add_thirdband, fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
+            tab_2, text='Band hinzufügen\n (+)', command=self.add_thirdband, fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
         self.add_thirdband_button.grid(row=9, column=0, padx=20, pady=(30, 0))
         # Terzband entfernen Button
         self.remove_thirdband_button = customtkinter.CTkButton(
-            tab_2, text='-', command=self.remove_thirdband, state='disabled', fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
+            tab_2, text='Band entfernen\n (-)', command=self.remove_thirdband, state='disabled', fg_color='transparent', border_width=2, text_color=("gray10", "#DCE4EE"))
         self.remove_thirdband_button.grid(
             row=9, column=1, padx=20, pady=(30, 0))
         # Terzband label
