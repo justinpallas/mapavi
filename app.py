@@ -39,15 +39,11 @@ class App(customtkinter.CTk):
         self.logo_label = customtkinter.CTkLabel(
             self.sidebar_frame, text="MaPaVi", font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
-        self.sidebar_button_1 = customtkinter.CTkButton(
-            self.sidebar_frame, command=self.sidebar_button_event)
-        self.sidebar_button_1.grid(row=1, column=0, padx=20, pady=10)
-        self.sidebar_button_2 = customtkinter.CTkButton(
-            self.sidebar_frame, command=self.sidebar_button_event)
-        self.sidebar_button_2.grid(row=2, column=0, padx=20, pady=10)
-        self.sidebar_button_3 = customtkinter.CTkButton(
-            self.sidebar_frame, command=self.sidebar_button_event)
-        self.sidebar_button_3.grid(row=3, column=0, padx=20, pady=10)
+        self.testdata_label = customtkinter.CTkLabel(self.sidebar_frame, text='Ergebnisse aus\n Hörversuchen:')
+        self.testdata_label.grid(row=1, column=0, padx=20, pady=(20, 0))
+        self.testdata_var = customtkinter.StringVar(value='nicht anzeigen')
+        self.testdata_selection = customtkinter.CTkOptionMenu(self.sidebar_frame, values=['nicht anzeigen', '250 Hz 60 dB', '1 kHz 40 dB', '1 kHz 60 dB', '1 kHz 80 dB', '4 kHz 60 dB'], command=self.testdata_callback, variable=self.testdata_var)
+        self.testdata_selection.grid(row=2, column=0, padx=20, pady=(5, 0))
         self.appearance_mode_label = customtkinter.CTkLabel(
             self.sidebar_frame, text="Appearance Mode:", anchor="w")
         self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
@@ -370,16 +366,9 @@ class App(customtkinter.CTk):
         self.error_message = customtkinter.CTkLabel(self, text='', text_color='red')
 
         # set default values
-        self.sidebar_button_3.configure(
-            state="disabled", text="Disabled CTkButton")
         self.appearance_mode_optionemenu.set("System")
         self.scaling_optionemenu.set("120%")
         self.noise_selector.set('white')
-
-    def open_input_dialog_event(self):
-        dialog = customtkinter.CTkInputDialog(
-            text="Type in a number:", title="CTkInputDialog")
-        print("CTkInputDialog:", dialog.get_input())
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
@@ -387,9 +376,6 @@ class App(customtkinter.CTk):
     def change_scaling_event(self, new_scaling: str):
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
-
-    def sidebar_button_event(self):
-        print('test')
 
     # Hinzufügen der Eingabefelder für ein weiteres Terzband
     def add_thirdband(self):
@@ -447,8 +433,8 @@ class App(customtkinter.CTk):
         for i in string_list:
             if i.isspace():
                 error = True
-                msg = 'Ein oder mehrere Felder sind leer!\n Alle Felder müssen ausgefüllt sein!'
-            elif i.isnumeric() == False:
+                msg = 'Ein oder mehrere Felder sind leer! Alle Felder müssen ausgefüllt sein!'
+            elif i.lstrip('+-').isnumeric() == False:
                 error = True
                 msg = 'Ein oder mehrere Felder enthalten ungültige Werte! Bitte nur Zahlen eingeben!'
         return error, msg
@@ -534,6 +520,10 @@ class App(customtkinter.CTk):
         )
 
         self.selected_file_label.configure(text=self.filename)
+
+    def testdata_callback(self, choice):
+        graph.testdata(choice)
+        
 
 
 if __name__ == "__main__":

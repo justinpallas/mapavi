@@ -4,6 +4,34 @@ import matplotlib.ticker as mticker
 import calculation as calc
 import data as data
 
+def testdata(choice):
+    testdata.bool = False
+    testdata.test_freq = 250
+    testdata.test_level = 60
+    if choice == '250 Hz 60 dB':
+        testdata.bool = True
+        testdata.test_freq = 250
+        testdata.test_level = 60
+    elif choice == '1 kHz 40 dB':
+        testdata.bool = True
+        testdata.test_freq = 1000
+        testdata.test_level = 40
+    elif choice == '1 kHz 60 dB':
+        testdata.bool = True
+        testdata.test_freq = 1000
+        testdata.test_level = 60
+    elif choice == '1 kHz 80 dB':
+        testdata.bool = True
+        testdata.test_freq = 1000
+        testdata.test_level = 80
+    elif choice == '4 kHz 60 dB':
+        testdata.bool = True
+        testdata.test_freq = 4000
+        testdata.test_level = 60
+    elif choice == 'nicht anzeigen':
+        testdata.bool = False
+    print('showing testdata for' + str(testdata.test_freq) + ' Hz and ' + str(testdata.test_level) + ' dB')
+
 # Erstellen der Diagramme
     # x -> X-Werte
     # freq_center -> Liste Mit Terzband-Mittenfrequenzen
@@ -11,7 +39,7 @@ import data as data
     # testdata -> False: Daten aus Hörversuchen nicht anzeigen | True: Daten aus Hörversuchen anzeigen (funktioniert nur, wenn zur Kombination aus freq_center und volume Testdaten vorliegen)
     # smooth -> False: keine "Glättung" der Mithörschwelle (Für einzelne Terzbänder) | True: "Glättung" der Mithörschwelle
     # example_freq -> False: kein Frequenzband aus Testdaten gewählt | 
-def render_plots(x, freq_center, volume, testdata=False, smooth=True):
+def render_plots(x, freq_center, volume, smooth=True):
     fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(14, 15))
 
     ax1 = axs[0]
@@ -92,8 +120,8 @@ def render_plots(x, freq_center, volume, testdata=False, smooth=True):
     line2.set_label('Ermittelte Terzbänder')
     line3.set_label('Mithörschwelle')
 
-    if testdata == True:
-        freqs, levels = data.median_data(freq_center, volume)
+    if testdata.bool == True:
+        freqs, levels = data.median_data(testdata.test_freq, testdata.test_level)
 
         # Darstellung Tonheit
         line4, = ax1.plot(calc.conv_to_bark(freqs), levels, 'g')
@@ -112,3 +140,6 @@ def render_plots(x, freq_center, volume, testdata=False, smooth=True):
 
 def close_plots():
     plt.close()
+
+def hide_testdata():
+    testdata = False
