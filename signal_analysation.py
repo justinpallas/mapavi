@@ -8,7 +8,7 @@ from os.path import dirname, join as pjoin
 from scipy.io import wavfile
 from scipy import signal
 import scipy.io
-import octave_filter as filter
+import PyOctaveBand as filter
 
 param = 'excel'
 
