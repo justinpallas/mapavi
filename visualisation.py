@@ -32,6 +32,8 @@ def testdata(choice):
         testdata.bool = False
     print('showing testdata for' + str(testdata.test_freq) + ' Hz and ' + str(testdata.test_level) + ' dB')
 
+testdata('nicht anzeigen')
+
 # Erstellen der Diagramme
     # x -> X-Werte
     # freq_center -> Liste Mit Terzband-Mittenfrequenzen
@@ -58,17 +60,17 @@ def render_plots(x, freq_center, volume, smooth=True):
     # -- Diagramm für physikalisches Eingangssignal --
     # Allgemein
     ax1.grid(True)
-    ax1.set_title("Darstellung in der Tonheit")
+    ax1.set_title("Darstellung in der Tonheit", fontsize=24)
 
     # X-Achse
-    ax1.set_xlabel("Tonheit z [Bark]")
+    ax1.set_xlabel("Tonheit z [Bark]", fontsize=20)
     ax1.set_xlim([0, 24])
     # ax1.set_xscale('symlog')
     ax1.set_xticks([2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24])
     # ax1.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
 
     # Y-Achse
-    ax1.set_ylabel("Pegel L [dB]")
+    ax1.set_ylabel("Pegel L [dB]", fontsize=20)
     ax1.set_ylim([-10, dBlim])
 
     # Darstellung der Ruhehörschwelle
@@ -91,10 +93,10 @@ def render_plots(x, freq_center, volume, smooth=True):
     # -- Diagramm mit gehörgerechter Darstellung des Signals --
     # Allgemein
     ax2.grid(True)
-    ax2.set_title("Darstellung in der Frequenz")
+    ax2.set_title("Darstellung in der Frequenz", fontsize=24)
 
     # X-Achse
-    ax2.set_xlabel("Frequenz f [Hz]")
+    ax2.set_xlabel("Frequenz f [Hz]", fontsize=20)
     ax2.set_xlim([16, 22000])
     ax2.set_xscale('symlog')
     ax2.set_xticks([16, 31.5, 63, 125, 250, 500,
@@ -102,7 +104,7 @@ def render_plots(x, freq_center, volume, smooth=True):
     ax2.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
 
     # Y-Achse
-    ax2.set_ylabel("Pegel L [dB]")
+    ax2.set_ylabel("Pegel L [dB]", fontsize=20)
     ax2.set_ylim([-10, dBlim])
 
     # Darstellung der Ruhehörschwelle
@@ -131,7 +133,7 @@ def render_plots(x, freq_center, volume, smooth=True):
 
 # -- Anzeigen der Diagramme --
     ax2.legend(loc='lower center', bbox_to_anchor=(
-        0.5, -0.37), fancybox=True, shadow=True)
+        0.5, -0.37), fancybox=True, shadow=True, fontsize=16)
     fig.tight_layout()
     plt.show()
 
