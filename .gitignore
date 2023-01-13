@@ -4,3 +4,4 @@ artemis_data
 app_old.py
 venv
 .pytest_cache
+.vscode
