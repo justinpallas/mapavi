@@ -1,46 +1,54 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.ticker as mticker
+import matplotlib.pyplot as plt  # type: ignore
+import matplotlib.ticker as mticker  # type: ignore
 import calculation as calc
 import data as data
+
 
 def testdata(choice):
     testdata.bool = False
     testdata.test_freq = 250
     testdata.test_level = 60
-    if choice == '250 Hz 60 dB':
+    if choice == "250 Hz 60 dB":
         testdata.bool = True
         testdata.test_freq = 250
         testdata.test_level = 60
-    elif choice == '1 kHz 40 dB':
+    elif choice == "1 kHz 40 dB":
         testdata.bool = True
         testdata.test_freq = 1000
         testdata.test_level = 40
-    elif choice == '1 kHz 60 dB':
+    elif choice == "1 kHz 60 dB":
         testdata.bool = True
         testdata.test_freq = 1000
         testdata.test_level = 60
-    elif choice == '1 kHz 80 dB':
+    elif choice == "1 kHz 80 dB":
         testdata.bool = True
         testdata.test_freq = 1000
         testdata.test_level = 80
-    elif choice == '4 kHz 60 dB':
+    elif choice == "4 kHz 60 dB":
         testdata.bool = True
         testdata.test_freq = 4000
         testdata.test_level = 60
-    elif choice == 'nicht anzeigen':
+    elif choice == "nicht anzeigen":
         testdata.bool = False
-    print('showing testdata for' + str(testdata.test_freq) + ' Hz and ' + str(testdata.test_level) + ' dB')
+    print(
+        "showing testdata for"
+        + str(testdata.test_freq)
+        + " Hz and "
+        + str(testdata.test_level)
+        + " dB"
+    )
 
-testdata('nicht anzeigen')
+
+testdata("nicht anzeigen")
 
 # Erstellen der Diagramme
-    # x -> X-Werte
-    # freq_center -> Liste Mit Terzband-Mittenfrequenzen
-    # volume -> Liste mit Terzpegeln
-    # testdata -> False: Daten aus Hörversuchen nicht anzeigen | True: Daten aus Hörversuchen anzeigen (funktioniert nur, wenn zur Kombination aus freq_center und volume Testdaten vorliegen)
-    # smooth -> False: keine "Glättung" der Mithörschwelle (Für einzelne Terzbänder) | True: "Glättung" der Mithörschwelle
-    # example_freq -> False: kein Frequenzband aus Testdaten gewählt | 
+# x -> X-Werte
+# freq_center -> Liste Mit Terzband-Mittenfrequenzen
+# volume -> Liste mit Terzpegeln
+# smooth -> False: keine "Glättung" der Mithörschwelle
+# (Für einzelne Terzbänder) | True: "Glättung" der Mithörschwelle
+
+
 def render_plots(x, freq_center, volume, smooth=True):
     fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(14, 15))
 
@@ -50,12 +58,12 @@ def render_plots(x, freq_center, volume, smooth=True):
     # Festlegung, ob der Graph "geglättet" werden soll, oder nicht
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
-    if smooth == True:    
+    if smooth is True:
         y = smoothed
     else:
         y = thresh
     # Obergrenze für Pegel in Dagrammen in dB
-    dBlim = 80 
+    dBlim = 80
 
     # -- Diagramm für physikalisches Eingangssignal --
     # Allgemein
@@ -74,20 +82,21 @@ def render_plots(x, freq_center, volume, smooth=True):
     ax1.set_ylim([-10, dBlim])
 
     # Darstellung der Ruhehörschwelle
-    line1, = ax1.plot(calc.conv_to_bark(data.tiq_freq),
-                      data.tiq_level, 'k--.')
+    (line1,) = ax1.plot(calc.conv_to_bark(data.tiq_freq), data.tiq_level, "k--.")
 
     # Darstellung des bestimmten Terzbandes
-    line2, = ax1.plot((calc.conv_to_bark(calc.signal(freq_center, volume, 'x'))),
-                      calc.signal(freq_center, volume, 'y'))
+    (line2,) = ax1.plot(
+        (calc.conv_to_bark(calc.signal(freq_center, volume, "x"))),
+        calc.signal(freq_center, volume, "y"),
+    )
 
     # Darstellung MHS von SBR
-    line3, = ax1.plot(calc.conv_to_bark(x), y, 'r')
+    (line3,) = ax1.plot(calc.conv_to_bark(x), y, "r")
 
     # Beschriftung der Graphen
-    line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
-    line2.set_label('Ermittelte Terzbänder')
-    line3.set_label('Mithörschwelle')
+    line1.set_label("Ruhehörschwelle nach DIN EN ISO 389-7:2020-06")
+    line2.set_label("Ermittelte Terzbänder")
+    line3.set_label("Mithörschwelle")
     # ax1.legend()
 
     # -- Diagramm mit gehörgerechter Darstellung des Signals --
@@ -98,9 +107,8 @@ def render_plots(x, freq_center, volume, smooth=True):
     # X-Achse
     ax2.set_xlabel("Frequenz f [Hz]", fontsize=20)
     ax2.set_xlim([16, 22000])
-    ax2.set_xscale('symlog')
-    ax2.set_xticks([16, 31.5, 63, 125, 250, 500,
-                   1000, 2000, 4000, 8000, 16000])
+    ax2.set_xscale("symlog")
+    ax2.set_xticks([16, 31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000])
     ax2.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
 
     # Y-Achse
@@ -108,40 +116,54 @@ def render_plots(x, freq_center, volume, smooth=True):
     ax2.set_ylim([-10, dBlim])
 
     # Darstellung der Ruhehörschwelle
-    line1, = ax2.plot(data.tiq_freq, data.tiq_level, 'k--.')
+    (line1,) = ax2.plot(data.tiq_freq, data.tiq_level, "k--.")
 
     # Darstellung des bestimmten Terzbandes
-    line2, = ax2.plot(calc.signal(freq_center, volume, 'x'),
-                      calc.signal(freq_center, volume, 'y'))
+    (line2,) = ax2.plot(
+        calc.signal(freq_center, volume, "x"), calc.signal(freq_center, volume, "y")
+    )
 
     # Darstellung MHS von SBR
-    line3, = ax2.plot(x, y, 'r')
+    (line3,) = ax2.plot(x, y, "r")
 
     # Beschriftung der Graphen
-    line1.set_label('Ruhehörschwelle nach DIN EN ISO 389-7:2020-06')
-    line2.set_label('Ermittelte Terzbänder')
-    line3.set_label('Mithörschwelle')
+    line1.set_label("Ruhehörschwelle nach DIN EN ISO 389-7:2020-06")
+    line2.set_label("Ermittelte Terzbänder")
+    line3.set_label("Mithörschwelle")
 
-    if testdata.bool == True:
+    if testdata.bool is True:
         freqs, levels = data.median_data(testdata.test_freq, testdata.test_level)
 
         # Darstellung Tonheit
-        line4, = ax1.plot(calc.conv_to_bark(freqs), levels, 'g')
+        (line4,) = ax1.plot(calc.conv_to_bark(freqs), levels, "g")
         # Darstellung Frequenz
-        line4, = ax2.plot(freqs, levels, 'g', label=('Median der Messwerte mit SBR bei fc = ' +
-                        str(freq_center) + ' Hz und L =' + str(volume) + ' dB als Maskierer'))
+        (line4,) = ax2.plot(
+            freqs,
+            levels,
+            "g",
+            label=(
+                "Median der Messwerte mit SBR bei fc = "
+                + str(freq_center)
+                + " Hz und L ="
+                + str(volume)
+                + " dB als Maskierer"
+            ),
+        )
 
-# -- Anzeigen der Diagramme --
-    ax2.legend(loc='lower center', bbox_to_anchor=(
-        0.5, -0.37), fancybox=True, shadow=True, fontsize=16)
+    # -- Anzeigen der Diagramme --
+    ax2.legend(
+        loc="lower center",
+        bbox_to_anchor=(0.5, -0.37),
+        fancybox=True,
+        shadow=True,
+        fontsize=16,
+    )
     fig.tight_layout()
     plt.show()
+
 
 # -- Schließen der Diagramme --
 
 
 def close_plots():
     plt.close()
-
-def hide_testdata():
-    testdata = False
