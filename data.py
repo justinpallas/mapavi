@@ -1,22 +1,30 @@
+"""data.py: handle data processing and get default values"""
 import json
 import os
 import glob
-from scipy.interpolate import interp1d
 import statistics
+from scipy.interpolate import interp1d  # type: ignore
 
 # Berechnung der Ruhehörschwelle von gegebenen Frequenzen
 
 
 def threshold_in_quiet(frequency):
+    """calculates the level of the threshold in quiet (tiq) for a given
+    frequency"""
     # Formel aus Skript TT2 Seite 23
-    level = (3.64*(frequency/1000)**-0.8)-6.5**(-0.6 *
-                                                (frequency/1000-3.3)**2)+(10**-3)*(frequency/1000)**4
+    level = (
+        (3.64 * (frequency / 1000) ** -0.8)
+        - 6.5 ** (-0.6 * (frequency / 1000 - 3.3) ** 2)
+        + (10**-3) * (frequency / 1000) ** 4
+    )
     return level
+
 
 # Daten für Frequenzen und zugehörigen Pegeln der
 # Ruhehörschwelle unter Freifeldbedingungen
 # aus DIN EN ISO 389-7:2020-06
-# herausgegeben von DIN Deutsches Institut für Normung e. V. , DIN German Institute for Standardization
+# herausgegeben von DIN Deutsches Institut für Normung e. V. ,
+# DIN German Institute for Standardization
 
 
 # tiq = [(Frequenz, Pegel)]
@@ -60,7 +68,7 @@ tiq = [
     (14000, 18.4),
     (16000, 40.2),
     (18000, 70.4),
-    (22000, threshold_in_quiet(22000))
+    (22000, threshold_in_quiet(22000)),
 ]
 
 tiq_freq, tiq_level = list(map(list, zip(*tiq)))
@@ -99,7 +107,7 @@ thirds = [
     (8913, 10000, 11220),
     (11220, 12500, 14130),
     (14130, 16000, 17780),
-    (17780, 20000, 22390)
+    (17780, 20000, 22390),
 ]
 
 thirds_low, thirds_center, thirds_high = list(map(list, zip(*thirds)))
@@ -107,112 +115,135 @@ thirds_all = [i for sub in thirds for i in sub]
 
 # Bestimmung welchem Terzband die jeweilige Frequenz am nächsten ist
 # und Rückgabe des entsprechenden Terzbands
-# Unterscheidung ob mit Mittenfrequenz, Startfrequenz, oder Endfrequenz des Bands verglichen wird
+# Unterscheidung ob mit Mittenfrequenz, Startfrequenz,
+# oder Endfrequenz des Bands verglichen wird
 
 
 def get_third_band(freq, param):
-    n = 0
-    if param == 'center':
-        list = thirds_center
-    elif param == 'low':
-        list = thirds_low
-    elif param == 'high':
-        list = thirds_high
-    for i in list:
-        if freq > i:
-            n += 1
-    if freq == list[n]:
-        return list[n]
+    """returns a list with frequencies of the corresponding third
+    band to a given frequency"""
+    val = 0
+    if param == "center":
+        freqs = thirds_center
+    elif param == "low":
+        freqs = thirds_low
+    elif param == "high":
+        freqs = thirds_high
+    for i in freqs:
+        if freqs > i:
+            val += 1
+    if freq == freqs[val]:
+        return freqs[val]
     else:
-        diff_up = list[n] - freq
-        diff_down = freq - list[n-1]
+        diff_up = freqs[val] - freq
+        diff_down = freq - freqs[val - 1]
         if diff_up < diff_down:
-            return list[n]
+            return freqs[val]
         elif diff_up > diff_down:
-            return list[n-1]
+            return freqs[val - 1]
         else:
-            return list[n]
+            return freqs[val]
 
-# Unterteilung des Eingegebenen Signals in Terzbänder, welche in der thirds Liste enthalten sind.
+
+# Unterteilung des Eingegebenen Signals in Terzbänder,
+# welche in der thirds Liste enthalten sind.
 
 
 def cut_to_thirds(signal):
-    start = get_third_band(signal[0], 'low')
-    end = get_third_band(signal[1], 'high')
-    n = 0
-    thirds = []
-    while start != thirds[n]:
-        n += 1
-    thirds.append(start)
-    while thirds[n] != end:
-        n += 1
-        thirds.append(thirds[n])
-    return thirds
+    """takes a broadband signal and cuts it into thirdbands"""
+    start = get_third_band(signal[0], "low")
+    end = get_third_band(signal[1], "high")
+    val = 0
+    bands = []
+    while start != bands[val]:
+        val += 1
+    bands.append(start)
+    while bands[val] != end:
+        val += 1
+        bands.append(bands[val])
+    return bands
+
 
 # Generierung von x-Werten von 0 Hz bis 22000 Hz
 
 
 def samples():
+    """generates x-values from 0 Hz to 2000 Hz"""
     freqs = []
     for i in range(22000):
         freqs.append(i)
     return freqs
 
+
 # Entsprechenden Ordner für Ergebnisse aus den Hörversuchen auswählen
 def get_path(freq, volume):
+    """selects the corresponding directory containing the testdata"""
     if volume == 60:
         if freq == -1:
-            path = './measured_data/threshold_in_quiet'
+            path = "./measured_data/threshold_in_quiet"
         elif freq == 250:
-            path = './measured_data/nbn_250Hz_60dB'
+            path = "./measured_data/nbn_250Hz_60dB"
         elif freq == 1000:
-            path = './measured_data/nbn_1kHz_60dB'
+            path = "./measured_data/nbn_1kHz_60dB"
         elif freq == 4000:
-            path = './measured_data/nbn_4kHz_60dB'
+            path = "./measured_data/nbn_4kHz_60dB"
     elif volume == 40:
-        path = './measured_data/nbn_1kHz_40dB'
+        path = "./measured_data/nbn_1kHz_40dB"
     elif volume == 80:
-        path = './measured_data/nbn_1kHz_80dB'
+        path = "./measured_data/nbn_1kHz_80dB"
     return path
+
 
 # Test Daten aus allen JSON-Dateien im entsprechenden Ordner auslesen
 def get_test_data(freq=-1, volume=60):
+    """reads the testdata from all JSON-files in the given directory"""
     data = []
     path = get_path(freq, volume)
-    print('getting test data from folder: ' + path)
-    for filename in glob.glob(os.path.join(path, '*.json')):
-        with open(os.path.join(os.getcwd(), filename), 'r') as f:
-            file = json.load(f)
+    print("getting test data from folder: " + path)
+    for filename in glob.glob(os.path.join(path, "*.json")):
+        with open(os.path.join(os.getcwd(), filename),
+                  "r", encoding=None) as f_name:
+            file = json.load(f_name)
             values = []
-            content = file['Data']
+            content = file["Data"]
             for key in content:
                 values.append(content[key])
             data.append(values)
     return data
 
+
 # die Mitten aus den entsprechenden Hoch- und Tief-Werten berechnen
 def find_mid_values(dataset):
+    """calculates the mid values from the corresponding high and low values"""
     values = []
-    for n in range(len(dataset)-1):
-        freq_mid = dataset[n][0] + (dataset[n+1][0] - dataset[n][0])
-        level_mid = dataset[n][1] + (dataset[n+1][1] - dataset[n][1])
+    for index in range(len(dataset) - 1):
+        freq_mid = dataset[index][0] + (dataset[index + 1][0] -
+                                        dataset[index][0])
+        level_mid = dataset[index][1] + (dataset[index + 1][1] -
+                                         dataset[index][1])
         mid = (freq_mid, level_mid)
         values.append(mid)
     return values
 
-# Liste vergleichbar machen mithilfe von Interpolation und festen Frequenzwerten (aus der thirds_all Liste)
+
+# Liste vergleichbar machen mithilfe von Interpolation und festen
+# Frequenzwerten (aus der thirds_all Liste)
 def comparable_list(dataset):
+    """makes the list comparable using interpolation
+    and fixed frequency values"""
     comp = []
     freqs, levels = list(map(list, zip(*dataset)))
-    f = interp1d(freqs, levels, kind='linear',
-                 bounds_error=False, fill_value=-100)
+    func = interp1d(freqs, levels, kind="linear",
+                    bounds_error=False, fill_value=-100)
     for i in thirds_all:
-        level = f(i)
+        level = func(i)
         comp.append((i, level))
     return comp
 
+
 # Berechnung des Medians der Pegel aus allen vergleichbaren Listen
 def median_data(freq=-1, volume=60):
+    """calculates the median level of all comparable lists"""
     median_levels = []
     comps = []
     freqs = []
@@ -221,11 +252,11 @@ def median_data(freq=-1, volume=60):
         mid = find_mid_values(i)
         comp = comparable_list(mid)
         comps.append(comp)
-    for n in range(len(comps[0])):
+    for index in range(len(comps[0])):
         levels = []
-        frequency = comps[0][n][0]
-        for z in range(len(comps)):
-            level = comps[z][n][1]
+        frequency = comps[0][index][0]
+        for val, com in enumerate(comps):
+            level = comps[val][index][1]
             levels.append(level)
         median = statistics.median(levels)
         median_levels.append(median)
