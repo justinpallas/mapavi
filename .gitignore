@@ -5,3 +5,4 @@ app_old.py
 venv
 .pytest_cache
 .vscode
+.flake8
