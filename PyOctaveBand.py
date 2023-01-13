@@ -4,14 +4,14 @@ Octave-Band and Fractional Octave-Band filter.
 """
 
 import numpy as np
-from scipy import signal
-import matplotlib.pyplot as plt
+from scipy import signal  # type: ignore
+import matplotlib.pyplot as plt  # type: ignore
 
 # Public methods
 __all__ = ['octavefilter', 'getansifrequencies', 'normalizedfreq']
 
 
-def octavefilter(x, fs, fraction=1, order=6, limits=None, show=0, sigbands =0):
+def octavefilter(x, fs, fraction=1, order=6, limits=None, show=0, sigbands=0):
     """
     Filter a signal with octave or fractional octave filter bank. This
     method uses a Butterworth filter with Second-Order Sections
@@ -27,7 +27,8 @@ def octavefilter(x, fs, fraction=1, order=6, limits=None, show=0, sigbands =0):
     [12,20000]
     :param show: Boolean for plot o not the filter response.
     :param sigbands: Boolean to also return the signal in the time domain
-    divided into bands. A list with as many arrays as there are frequency bands.
+    divided into bands. A list with as many arrays as there
+    are frequency bands.
     :returns: Sound Pressure Level and Frequency array
     """
 
@@ -54,7 +55,7 @@ def octavefilter(x, fs, fraction=1, order=6, limits=None, show=0, sigbands =0):
             sd = signal.resample(x, round(len(x) / factor[idx]))
             y = signal.sosfilt(sos[idx], sd)
             spl[idx] = 20 * np.log10(np.std(y) / 2e-5)
-            xb.append(signal.resample_poly(y,factor[idx],1))
+            xb.append(signal.resample_poly(y, factor[idx], 1))
         return spl.tolist(), freq, xb
     else:
         # Create array with SPL for each frequency band
