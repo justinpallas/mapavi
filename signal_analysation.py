@@ -7,6 +7,7 @@ import PyOctaveBand as filter
 
 # Die Terzpegel aus Excel-Datei auslesen, welche von Artemis generitert wurde
 def read_excel(filename):
+    """reads third band levels from Excel-file"""
     df = pd.read_excel(filename, header=12, usecols="A:B", skiprows=[13])
     data = df.to_dict()
     freqs = []
@@ -20,6 +21,7 @@ def read_excel(filename):
 
 # Die Terzpegel mithilfe eines Terzfilters aus Wave Datei bestimmen
 def read_wav(filename):
+    """reads third band levels from wav-file"""
     samplerate, data = wavfile.read(filename)
     level = data
 
@@ -32,10 +34,12 @@ def read_wav(filename):
 
 
 def critical_bands(spl, freq):
+    """calculates the levels of the critical bands"""
     I_zero = 10 ** (-12)
     levels = []
     freqs = []
     n = 0
+    length = len(freq)
     border_freqs = [100, 200, 300, 400, 500]
     for i in border_freqs:
         band_freqs = []
@@ -50,7 +54,7 @@ def critical_bands(spl, freq):
         for z in band_freqs:
             freqs.append(z)
             levels.append(band_level)
-    while freq[n] < 16000:
+    while freq[n] < freq[length - 1]:
         print(freq[n])
         levels.append(spl[n])
         freqs.append(freq[n])
@@ -59,6 +63,7 @@ def critical_bands(spl, freq):
 
 
 def load_file(filename):
+    """loads a file with given"""
     if filename.endswith(".wav"):
         spl, freq = read_wav(filename)
     elif filename.endswith(".xlsx"):
