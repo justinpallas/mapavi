@@ -39,7 +39,16 @@ def testdata(choice):
     )
 
 
+def thirdbands(switch):
+    thirdbands.show = True
+    if switch == "on":
+        thirdbands.show = True
+    if switch == "off":
+        thirdbands.show = False
+
+
 testdata("nicht anzeigen")
+thirdbands("on")
 
 # Erstellen der Diagramme
 # x -> X-Werte
@@ -65,7 +74,7 @@ def render_plots(x, freq_center, volume, smooth=True):
     # Obergrenze für Pegel in Dagrammen in dB
     dBlim = 80
 
-    # -- Diagramm für physikalisches Eingangssignal --
+    # -- Diagramm für Darstellung in der Tonheit --
     # Allgemein
     ax1.grid(True)
     ax1.set_title("Darstellung in der Tonheit", fontsize=24)
@@ -81,27 +90,27 @@ def render_plots(x, freq_center, volume, smooth=True):
     ax1.set_ylabel("Pegel L [dB]", fontsize=20)
     ax1.set_ylim([-10, dBlim])
 
-    ax1.tick_params(axis='both', labelsize=16)
+    ax1.tick_params(axis="both", labelsize=16)
 
     # Darstellung der Ruhehörschwelle
     (line1,) = ax1.plot(calc.conv_to_bark(data.tiq_freq), data.tiq_level, "k--.")
 
-    # Darstellung des bestimmten Terzbandes
-    (line2,) = ax1.plot(
-        (calc.conv_to_bark(calc.signal(freq_center, volume, "x"))),
-        calc.signal(freq_center, volume, "y"),
-    )
+    # Darstellung der ermittelten Terzbänder
+    if thirdbands.show is True:
+        (line2,) = ax1.plot(
+            (calc.conv_to_bark(calc.signal(freq_center, volume, "x"))),
+            calc.signal(freq_center, volume, "y"),
+        )
 
     # Darstellung MHS von SBR
     (line3,) = ax1.plot(calc.conv_to_bark(x), y, "r")
 
     # Beschriftung der Graphen
     line1.set_label("Ruhehörschwelle nach DIN EN ISO 389-7:2020-06")
-    line2.set_label("Ermittelte Terzbänder")
     line3.set_label("Mithörschwelle")
     # ax1.legend()
 
-    # -- Diagramm mit gehörgerechter Darstellung des Signals --
+    # -- Diagramm mit Darstellung in der Frequenz --
     # Allgemein
     ax2.grid(True)
     ax2.set_title("Darstellung in der Frequenz", fontsize=24)
@@ -116,21 +125,23 @@ def render_plots(x, freq_center, volume, smooth=True):
     ax2.set_ylabel("Pegel L [dB]", fontsize=20)
     ax2.set_ylim([-10, dBlim])
 
-    ax2.tick_params(axis='both', labelsize=16)
+    ax2.tick_params(axis="both", labelsize=16)
     # Darstellung der Ruhehörschwelle
     (line1,) = ax2.plot(data.tiq_freq, data.tiq_level, "k--.")
 
-    # Darstellung des bestimmten Terzbandes
-    (line2,) = ax2.plot(
-        calc.signal(freq_center, volume, "x"), calc.signal(freq_center, volume, "y")
-    )
+    # Darstellung der ermittelten Terzbänder
+    if thirdbands.show is True:
+        (line2,) = ax2.plot(
+            calc.signal(freq_center, volume, "x"),
+            calc.signal(freq_center, volume, "y"),
+            label="Ermittelte Terzbänder",
+        )
 
     # Darstellung MHS von SBR
     (line3,) = ax2.plot(x, y, "r")
 
     # Beschriftung der Graphen
     line1.set_label("Ruhehörschwelle nach DIN EN ISO 389-7:2020-06")
-    line2.set_label("Ermittelte Terzbänder")
     line3.set_label("Mithörschwelle")
 
     if testdata.bool is True:

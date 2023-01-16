@@ -55,7 +55,6 @@ def critical_bands(spl, freq):
             freqs.append(z)
             levels.append(band_level)
     while freq[n] < freq[length - 1]:
-        print(freq[n])
         levels.append(spl[n])
         freqs.append(freq[n])
         n += 1

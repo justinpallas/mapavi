@@ -58,6 +58,16 @@ class App(customtkinter.CTk):
             variable=self.testdata_var,
         )
         self.testdata_selection.grid(row=2, column=0, padx=20, pady=(5, 0))
+        self.show_thirdbands = customtkinter.StringVar(value="on")
+        self.show_thirdbands_switch = customtkinter.CTkSwitch(
+            self.sidebar_frame,
+            text="Terzbänder\nanzeigen",
+            command=self.thirdband_switch,
+            variable=self.show_thirdbands,
+            onvalue="on",
+            offvalue="off",
+        )
+        self.show_thirdbands_switch.grid(row=3, column=0, padx=20, pady=(30, 0))
         self.appearance_mode_label = customtkinter.CTkLabel(
             self.sidebar_frame, text="Appearance Mode:", anchor="w"
         )
@@ -441,8 +451,8 @@ class App(customtkinter.CTk):
         tab_3 = self.tabview.tab("Datei Laden")
         self.tab_3_header_label_1 = customtkinter.CTkLabel(
             tab_3,
-            text="Datei zur Berechnung der Mithörschwelle auswählen\
-                 (WAV- oder Excel-Datei)",
+            text="Datei zur Berechnung der Mithörschwelle auswählen "
+            "(WAV- oder Excel-Datei)",
         )
         self.tab_3_header_label_1.grid(row=0, column=0, padx=20, pady=(5, 20))
         # Datei Laden button
@@ -613,7 +623,7 @@ class App(customtkinter.CTk):
 
     # Auswahl einer Datei zum Berechnen
     def select_file(self):
-        filetypes = (("audio files", "*.wav"), ("Excel files", "*.xl*"))
+        filetypes = (("audio files", "*.wav"), ("Excel files", "*.xlsx"))
 
         self.filename = fd.askopenfilename(
             title="Datei auswählen", initialdir="/", filetypes=filetypes
@@ -623,6 +633,10 @@ class App(customtkinter.CTk):
 
     def testdata_callback(self, choice):
         graph.testdata(choice)
+
+    def thirdband_switch(self):
+        switch = self.show_thirdbands.get()
+        graph.thirdbands(switch)
 
 
 if __name__ == "__main__":
