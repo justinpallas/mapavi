@@ -81,6 +81,8 @@ def render_plots(x, freq_center, volume, smooth=True):
     ax1.set_ylabel("Pegel L [dB]", fontsize=20)
     ax1.set_ylim([-10, dBlim])
 
+    ax1.tick_params(axis='both', labelsize=16)
+
     # Darstellung der Ruhehörschwelle
     (line1,) = ax1.plot(calc.conv_to_bark(data.tiq_freq), data.tiq_level, "k--.")
 
@@ -110,11 +112,11 @@ def render_plots(x, freq_center, volume, smooth=True):
     ax2.set_xscale("symlog")
     ax2.set_xticks([16, 31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000])
     ax2.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
-
     # Y-Achse
     ax2.set_ylabel("Pegel L [dB]", fontsize=20)
     ax2.set_ylim([-10, dBlim])
 
+    ax2.tick_params(axis='both', labelsize=16)
     # Darstellung der Ruhehörschwelle
     (line1,) = ax2.plot(data.tiq_freq, data.tiq_level, "k--.")
 
