@@ -607,9 +607,15 @@ class App(customtkinter.CTk):
 
     # Berechnen und Anzeigen der Mithörschwelle aus der geladenen Datei
     def calculate_from_file(self):
-        graph.close_plots()
-        freqs, levels = analyzed.load_file(self.filename)
-        graph.render_plots(data.samples(), freqs, levels)
+        try:
+            graph.close_plots()
+            freqs, levels = analyzed.load_file(self.filename)
+            self.error_message.grid_remove()
+            graph.render_plots(data.samples(), freqs, levels)
+        except AttributeError:
+            self.show_error("Keine Datei ausgewählt!")
+        except Exception as err:
+            self.show_error(err)
 
     # Auswahl einer Datei zum Berechnen
     def select_file(self):

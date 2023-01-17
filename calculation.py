@@ -140,32 +140,35 @@ def threshold(frequency, volume, freq_center):
 # Berechnen der Gesamtmithörschwelle mehrerer Schmalbandrauschen
 def multi_threshold(frequency, volume, freq_center):
     """calculate the masking pattern of multiple narrow band noises"""
-    levels = []
-    for i in range(len(freq_center)):
-        freq_low = []
-        freq_high = []
-        for n in frequency:
-            if n <= freq_center[i]:
-                freq_low.append(n)
-            elif n > freq_center[i]:
-                freq_high.append(n)
-        level_low = calculate_threshold(freq_low, volume[i], freq_center[i], 0)
-        level_high = calculate_threshold(freq_high, volume[i], freq_center[i], 1)
-        level = level_low
-        for n in level_high:
-            level.append(n)
-        levels.append(level)
-    # print('levels = ' + str(levels))
-    levels.append(smoothing_line(frequency, volume, freq_center))
-    thresh = []
-    for i in levels[0]:
-        thresh.append(i)
-    for i in range(len(freq_center) - 1):
-        for n in range(len(frequency)):
-            if thresh[n] < levels[i + 1][n]:
-                thresh[n] = levels[i + 1][n]
-    # print('thresh = ' + str(thresh))
-    return thresh
+    try:
+        levels = []
+        for i in range(len(freq_center)):
+            freq_low = []
+            freq_high = []
+            for n in frequency:
+                if n <= freq_center[i]:
+                    freq_low.append(n)
+                elif n > freq_center[i]:
+                    freq_high.append(n)
+            level_low = calculate_threshold(freq_low, volume[i], freq_center[i], 0)
+            level_high = calculate_threshold(freq_high, volume[i], freq_center[i], 1)
+            level = level_low
+            for n in level_high:
+                level.append(n)
+            levels.append(level)
+        # print('levels = ' + str(levels))
+        levels.append(smoothing_line(frequency, volume, freq_center))
+        thresh = []
+        for i in levels[0]:
+            thresh.append(i)
+        for i in range(len(freq_center) - 1):
+            for n in range(len(frequency)):
+                if thresh[n] < levels[i + 1][n]:
+                    thresh[n] = levels[i + 1][n]
+        # print('thresh = ' + str(thresh))
+        return thresh
+    except:
+        raise Exception('Es ist ein Fehler bei der Berechnung der Mithörschwelle aufgetreten!')
 
 
 # Berechnung der "geglätteten" Mithörschwelle mithilfe der smoothing_line
@@ -236,6 +239,8 @@ def signal(freq_center, volume, xy):
 # Aufteilen eines breitbandigen Signals in einzelne Terzbänder
 def cut_to_thirds(signal):
     """cuts a single broadband noise into multiple third bands"""
+    if signal[0] < 0 or signal[1] < 0:
+        raise Exception('Fehler bei der Berechnung: Frequenzen dürfen nicht negativ sein!')
     start = get_third_band(signal[0], "low")
     end = get_third_band(signal[1], "high")
     curr_band = start
