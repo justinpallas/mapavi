@@ -63,7 +63,7 @@ class App(customtkinter.CTk):
         self.noise_selector_label = customtkinter.CTkLabel(self.sidebar_frame, text="Rauschtyp:")
         self.noise_selector_label.grid(row=5, column=0, padx=20, pady=(0, 0))
         self.noise_selector = customtkinter.CTkOptionMenu(
-            self.sidebar_frame, values=["white", "GAR", "GVR"]
+            self.sidebar_frame, values=["blau", "weiß", "rosa", "rot", "GAR", "GVR"]
         )
         self.noise_selector.grid(row=6, column=0, padx=20, pady=(0, 0))
         self.show_thirdbands = customtkinter.StringVar(value="on")

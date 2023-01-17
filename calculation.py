@@ -255,6 +255,7 @@ def cut_to_thirds(signal):
 def get_volumes(signal, type):
     """generates the third band levels for the corresponding noise type"""
     volumes = []
+    gap = len(cut_to_thirds((16, 500)))
     if type == "GAR":  # gleichmäßig anregendes Rauschen
         for n in range(len(signal)):
             thirds = cut_to_thirds(signal[n])
@@ -272,7 +273,7 @@ def get_volumes(signal, type):
                 # werden außerdem frequenzunabhängig 2 dB abgezogen.
                 level = signal[n][2] + masking_index(z[1]) - 2
                 volumes.append(level)
-    elif type == "white":
+    elif type == "weiß":
         for n in range(len(signal)):
             thirds = cut_to_thirds(signal[n])
             for z in thirds:
@@ -280,8 +281,45 @@ def get_volumes(signal, type):
                 if freq_high <= 500:
                     volumes.append(signal[n][2])
                 else:
-                    distance = len(cut_to_thirds((500, freq_high)))
-                    level = signal[n][2] + distance - 1
+                    distance = len(cut_to_thirds((500, freq_high))) - 1
+                    level = signal[n][2] + distance
+                    volumes.append(level)
+    elif type == "rosa":
+        for n in range(len(signal)):
+            thirds = cut_to_thirds(signal[n])
+            for z in thirds:
+                freq_high = z[2]
+                if freq_high <= 500:
+                    distance = len(cut_to_thirds((16, freq_high))) - 1
+                    level = signal[n][2] - distance
+                    volumes.append(level)
+                else: 
+                    level = signal[n][2] - gap
+                    volumes.append(level)
+    elif type == "rot":
+        for n in range(len(signal)):
+            thirds = cut_to_thirds(signal[n])
+            for z in thirds:
+                freq_high = z[2]
+                distance = len(cut_to_thirds((16, freq_high))) - 1
+                if freq_high <= 500:
+                    level = signal[n][2] - (distance * 2)
+                    volumes.append(level)
+                else: 
+                    level = signal[n][2] - gap - distance
+                    volumes.append(level)
+    elif type == "blau":
+        for n in range(len(signal)):
+            thirds = cut_to_thirds(signal[n])
+            for z in thirds:
+                freq_high = z[2]
+                if freq_high <= 500:
+                    distance = len(cut_to_thirds((16, freq_high))) - 1
+                    level = signal[n][2] + distance
+                    volumes.append(level)
+                else:
+                    distance = len(cut_to_thirds((500, freq_high))) - 1
+                    level = signal[n][2] + (distance * 2) +  gap
                     volumes.append(level)
     return volumes
 
