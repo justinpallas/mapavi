@@ -609,6 +609,8 @@ class App(customtkinter.CTk):
     def calculate_from_file(self):
         try:
             graph.close_plots()
+            if self.filename == "":
+                raise AttributeError
             freqs, levels = analyzed.load_file(self.filename)
             self.error_message.grid_remove()
             graph.render_plots(data.samples(), freqs, levels)
