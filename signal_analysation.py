@@ -8,14 +8,14 @@ import PyOctaveBand as filter
 # Die Terzpegel aus Excel-Datei auslesen, welche von Artemis generitert wurde
 def read_excel(filename):
     """reads third band levels from Excel-file"""
-    df = pd.read_excel(filename, header=12, usecols="A:B", skiprows=[13])
+    df = pd.read_excel(filename, header=0, usecols="A:B",)
     data = df.to_dict()
     freqs = []
     levels = []
-    for i in data["Hz"]:
-        freqs.append(data["Hz"][i])
-    for i in data["dB(SPL)"]:
-        levels.append(data["dB(SPL)"][i])
+    for i in data["Frequenz in Hz"]:
+        freqs.append(data["Frequenz in Hz"][i])
+    for i in data["Pegel in dB"]:
+        levels.append(data["Pegel in dB"][i])
     return levels, freqs
 
 
