@@ -534,18 +534,17 @@ class App(customtkinter.CTk):
             self.freqband_count -= 1
 
     def validate(self, string_list):
-        error = False
         msg = ""
         for i in string_list:
-            if i.isspace():
-                error = True
-                msg = "Ein oder mehrere Felder sind leer!\
-                        Alle Felder müssen ausgefüllt sein!"
+            if i == "":
+                msg = "Ein oder mehrere Felder sind leer! Alle Felder müssen ausgefüllt sein!"
+                raise Exception(msg)
+            elif i.isspace():
+                msg = "Ein oder mehrere Felder sind leer! Alle Felder müssen ausgefüllt sein!"
+                raise Exception(msg)
             elif i.lstrip("+-").isnumeric() is False:
-                error = True
-                msg = "Ein oder mehrere Felder enthalten ungültige Werte!\
-                     Bitte nur Zahlen eingeben!"
-        return error, msg
+                msg = "Ein oder mehrere Felder enthalten ungültige Werte! Bitte nur Zahlen eingeben!"
+                raise Exception(msg)
 
     def show_error(self, msg):
         self.error_message.configure(text=msg)
@@ -558,12 +557,12 @@ class App(customtkinter.CTk):
         i = self.freqband_count
         signal = []
         noise_type = self.noise_selector.get()
-        for n in range(i + 1):
-            f1_entry = self.f1_entry_list[n].get()
-            f2_entry = self.f2_entry_list[n].get()
-            level_entry = self.tab_1_level_entry_list[n].get()
-            error, msg = self.validate((f1_entry, f2_entry, level_entry))
-            if error is False:
+        try:
+            for n in range(i + 1):
+                f1_entry = self.f1_entry_list[n].get()
+                f2_entry = self.f2_entry_list[n].get()
+                level_entry = self.tab_1_level_entry_list[n].get()
+                self.validate((f1_entry, f2_entry, level_entry))
                 f1 = float(f1_entry)
                 f2 = float(f2_entry)
                 level = float(level_entry)
@@ -571,7 +570,6 @@ class App(customtkinter.CTk):
                     signal.append((f1, f2, level))
                 else:
                     signal.append((f2, f1, level))
-        if error is False:
             filled = calc.fill_signal(signal)
             thirds = []
             for i in filled:
@@ -582,8 +580,8 @@ class App(customtkinter.CTk):
             volume = calc.get_volumes(filled, noise_type)
             self.error_message.grid_remove()
             graph.render_plots(data.samples(), center_freqs, volume)
-        else:
-            self.show_error(msg)
+        except Exception as inst:
+            self.show_error(inst)
 
     # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Terzbändern
     def calculate_from_thirdband(self):
@@ -592,20 +590,20 @@ class App(customtkinter.CTk):
         i = self.thirdband_count
         freqs = []
         levels = []
-        for n in range(i + 1):
-            fc_entry = self.fc_entry_list[n].get()
-            level_entry = self.tab_2_level_entry_list[n].get()
-            error, msg = self.validate((fc_entry, level_entry))
-            if error is False:
+        try:
+            for n in range(i + 1):
+                fc_entry = self.fc_entry_list[n].get()
+                level_entry = self.tab_2_level_entry_list[n].get()
+                self.validate((fc_entry, level_entry))
                 fc = float(fc_entry)
                 level = float(level_entry)
                 freqs.append(fc)
                 levels.append(level)
-        if error is False:
             self.error_message.grid_remove()
             graph.render_plots(data.samples(), freqs, levels, smooth=False)
-        else:
-            self.show_error(msg)
+        except Exception as inst:
+            self.show_error(inst)
+        #self.show_error(msg)
 
     # Berechnen und Anzeigen der Mithörschwelle aus der geladenen Datei
     def calculate_from_file(self):
