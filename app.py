@@ -33,6 +33,7 @@ class App(customtkinter.CTk):
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
+        self.sidebar_frame.grid_rowconfigure(7, weight=1)
         self.logo_label = customtkinter.CTkLabel(
             self.sidebar_frame,
             text="MaPaVi",
@@ -58,6 +59,13 @@ class App(customtkinter.CTk):
             variable=self.testdata_var,
         )
         self.testdata_selection.grid(row=2, column=0, padx=20, pady=(5, 0))
+        # Rauschtyp Auswahl
+        self.noise_selector_label = customtkinter.CTkLabel(self.sidebar_frame, text="Rauschtyp:")
+        self.noise_selector_label.grid(row=5, column=0, padx=20, pady=(0, 0))
+        self.noise_selector = customtkinter.CTkOptionMenu(
+            self.sidebar_frame, values=["white", "GAR", "GVR"]
+        )
+        self.noise_selector.grid(row=6, column=0, padx=20, pady=(0, 0))
         self.show_thirdbands = customtkinter.StringVar(value="on")
         self.show_thirdbands_switch = customtkinter.CTkSwitch(
             self.sidebar_frame,
@@ -71,23 +79,13 @@ class App(customtkinter.CTk):
         self.appearance_mode_label = customtkinter.CTkLabel(
             self.sidebar_frame, text="Darstellungsmodus:", anchor="w"
         )
-        self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_label.grid(row=8, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(
             self.sidebar_frame,
             values=["Light", "Dark", "System"],
             command=self.change_appearance_mode_event,
         )
-        self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 20))
-        # self.scaling_label = customtkinter.CTkLabel(
-        #     self.sidebar_frame, text="UI Scaling:", anchor="w"
-        # )
-        # self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-        # self.scaling_optionemenu = customtkinter.CTkOptionMenu(
-        #     self.sidebar_frame,
-        #     values=["80%", "90%", "100%", "110%", "120%"],
-        #     command=self.change_scaling_event,
-        # )
-        # self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
+        self.appearance_mode_optionemenu.grid(row=9, column=0, padx=20, pady=(10, 20))
 
         # create tabview
         self.tabview = customtkinter.CTkTabview(self, width=750, height=500)
@@ -119,16 +117,11 @@ class App(customtkinter.CTk):
             tab_1, text="Pegel(L)\n in dB"
         )
         self.tab_1_header_label_4.grid(row=0, column=3, padx=20, pady=(5, 20))
-        # Rauschtyp Auswahl
-        self.noise_selector = customtkinter.CTkOptionMenu(
-            tab_1, values=["white", "GAR", "GVR"]
-        )
-        self.noise_selector.grid(row=0, column=5, padx=20, pady=(5, 0))
         # Berechnen Button
         self.thirdbands_submit_button = customtkinter.CTkButton(
             tab_1, text="Mithörschwelle\n Berechnen", command=self.calculate_from_signal
         )
-        self.thirdbands_submit_button.grid(row=1, column=5, padx=20, pady=(5, 0))
+        self.thirdbands_submit_button.grid(row=0, column=5, padx=20, pady=(5, 0))
         # Frequenzband hinzufügen Button
         self.add_freqband_button = customtkinter.CTkButton(
             tab_1,
@@ -481,7 +474,6 @@ class App(customtkinter.CTk):
 
         # set default values
         self.appearance_mode_optionemenu.set("System")
-        # self.scaling_optionemenu.set("120%")
         self.noise_selector.set("white")
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
