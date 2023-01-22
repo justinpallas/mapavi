@@ -60,7 +60,9 @@ class App(customtkinter.CTk):
         )
         self.testdata_selection.grid(row=2, column=0, padx=20, pady=(5, 0))
         # Rauschtyp Auswahl
-        self.noise_selector_label = customtkinter.CTkLabel(self.sidebar_frame, text="Rauschtyp:")
+        self.noise_selector_label = customtkinter.CTkLabel(
+            self.sidebar_frame, text="Rauschtyp:"
+        )
         self.noise_selector_label.grid(row=5, column=0, padx=20, pady=(0, 0))
         self.noise_selector = customtkinter.CTkOptionMenu(
             self.sidebar_frame, values=["blau", "weiß", "rosa", "rot", "GAR", "GVR"]
@@ -603,7 +605,7 @@ class App(customtkinter.CTk):
             graph.render_plots(data.samples(), freqs, levels, smooth=False)
         except Exception as inst:
             self.show_error(inst)
-        #self.show_error(msg)
+        # self.show_error(msg)
 
     # Berechnen und Anzeigen der Mithörschwelle aus der geladenen Datei
     def calculate_from_file(self):
