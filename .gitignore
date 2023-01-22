@@ -7,3 +7,4 @@ venv
 .vscode
 .flake8
 output
+assets
