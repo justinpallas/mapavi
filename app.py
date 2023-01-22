@@ -476,7 +476,7 @@ class App(customtkinter.CTk):
 
         # set default values
         self.appearance_mode_optionemenu.set("System")
-        self.noise_selector.set("white")
+        self.noise_selector.set("weiß")
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
         customtkinter.set_appearance_mode(new_appearance_mode)
