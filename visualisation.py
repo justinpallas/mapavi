@@ -142,7 +142,7 @@ def render_plots(x, freq_center, volume, smooth=True):
 
     # Beschriftung der Graphen
     line1.set_label("Ruhehörschwelle nach DIN EN ISO 389-7:2020-06")
-    line3.set_label("Mithörschwelle")
+    line3.set_label("Berechnete Mithörschwelle")
 
     if testdata.bool is True:
         freqs, levels = data.median_data(testdata.test_freq, testdata.test_level)
@@ -156,9 +156,9 @@ def render_plots(x, freq_center, volume, smooth=True):
             "g",
             label=(
                 "Median der Messwerte mit SBR bei fc = "
-                + str(freq_center)
-                + " Hz und L ="
-                + str(volume)
+                + str(testdata.test_freq)
+                + " Hz und L = "
+                + str(testdata.test_level)
                 + " dB als Maskierer"
             ),
         )
