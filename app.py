@@ -522,6 +522,16 @@ class App(customtkinter.CTk):
             self.amplifier_frame, placeholder_text="Verstärkung"
         )
         self.amplifier_entry.grid(row=3, column=0, padx=20, pady=(10, 0))
+        # Pegel für 500 Hz und 1000 Hz im Ergebnis anzeigen
+        self.show_amp = customtkinter.StringVar(value="off")
+        self.show_amp_switch = customtkinter.CTkSwitch(
+            self.amplifier_frame,
+            text="Pegel von\n500 Hz und 1 kHz\nim Ergebnis anzeigen",
+            variable=self.show_amp,
+            onvalue="on",
+            offvalue="off",
+        )
+        self.show_amp_switch.grid(row=4, column=0, padx=20, pady=(30, 0))
         # Mithörschwelle berechnen button
         self.file_submit_button = customtkinter.CTkButton(
             self.loadfile_frame,
@@ -671,7 +681,7 @@ class App(customtkinter.CTk):
         try:
             graph.close_plots()
             if self.filename == "":
-                raise AttributeError
+                raise AttributeError(msg)
             amp_entry = self.amplifier_entry.get()
             if amp_entry == "":
                 amp_entry = "0"
@@ -679,9 +689,26 @@ class App(customtkinter.CTk):
             amp = float(amp_entry)
             freqs, levels = analyzed.load_file(self.filename, amp)
             self.error_message.grid_remove()
-            graph.render_plots(data.samples(), freqs, levels)
-        except AttributeError:
-            self.show_error("Keine Datei ausgewählt!")
+            if self.show_amp.get() == "on":
+                calibration = calc.get_calibration(freqs, levels)
+                msg = (
+                    "mit "
+                    + str(calibration[0][1])
+                    + " dB bei "
+                    + str(calibration[0][0])
+                    + " Hz und "
+                    + str(calibration[1][1])
+                    + " dB bei "
+                    + str(calibration[1][0])
+                    + " Hz"
+                )
+                graph.render_plots(data.samples(), freqs, levels, show_calibration=msg)
+            elif self.show_amp.get() == "off":
+                graph.render_plots(
+                    data.samples(), freqs, levels, show_calibration="none"
+                )
+        except AttributeError as msg:
+            self.show_error(msg)
         except Exception as err:
             self.show_error(err)
 

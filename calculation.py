@@ -1,5 +1,6 @@
 """calculation.py: does all necessary calculations for masking pattern visualisation"""
 import math
+from bisect import bisect_left
 
 # Umrechnung von Frequenz in die Entsprechende Tonheit (Bark)
 
@@ -347,3 +348,32 @@ def round_list(values):
     for value in values:
         rounded.append(round(value, 1))
     return rounded
+
+
+def take_closest(myList, myNumber):
+    """
+    Assumes myList is sorted. Returns closest value to myNumber.
+
+    If two numbers are equally close, return the smallest number.
+    """
+    pos = bisect_left(myList, myNumber)
+    if pos == 0:
+        return myList[0]
+    if pos == len(myList):
+        return myList[-1]
+    before = myList[pos - 1]
+    after = myList[pos]
+    if after - myNumber < myNumber - before:
+        return after
+    else:
+        return before
+
+
+def get_calibration(freqs, levels):
+    freq_500 = take_closest(freqs, 500)
+    index_500 = freqs.index(freq_500)
+    level_500 = levels[index_500]
+    freq_1000 = take_closest(freqs, 1000)
+    index_1000 = freqs.index(freq_1000)
+    level_1000 = levels[index_1000]
+    return (round_list((freq_500, level_500)), round_list((freq_1000, level_1000)))

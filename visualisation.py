@@ -62,7 +62,7 @@ thirdbands("on")
 # (Für einzelne Terzbänder) | True: "Glättung" der Mithörschwelle
 
 
-def render_plots(x, freq_center, volume, smooth=True):
+def render_plots(x, freq_center, volume, smooth=True, show_calibration="none"):
     fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(14, 15))
 
     ax1 = axs[0]
@@ -167,6 +167,22 @@ def render_plots(x, freq_center, volume, smooth=True):
             ),
         )
 
+    if show_calibration != "none":
+        ax1.text(
+            1.5,
+            75,
+            show_calibration,
+            style="italic",
+            bbox={"facecolor": "green", "alpha": 0.5, "pad": 10},
+        )
+        ax2.text(
+            28,
+            75,
+            show_calibration,
+            style="italic",
+            bbox={"facecolor": "green", "alpha": 0.5, "pad": 10},
+        )
+
     # -- Anzeigen der Diagramme --
     ax2.legend(
         loc="lower center",
@@ -184,3 +200,12 @@ def render_plots(x, freq_center, volume, smooth=True):
 
 def close_plots():
     plt.close()
+
+
+# render_plots(
+#     data.samples(),
+#     [1000],
+#     [60],
+#     smooth=False,
+#     show_amp="mit 60 dB bei 500 Hz und 80 dB bei 1 kHz",
+# )
