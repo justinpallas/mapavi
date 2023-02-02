@@ -168,7 +168,9 @@ def multi_threshold(frequency, volume, freq_center):
         # print('thresh = ' + str(thresh))
         return thresh
     except:
-        raise Exception('Es ist ein Fehler bei der Berechnung der Mithörschwelle aufgetreten!')
+        raise Exception(
+            "Es ist ein Fehler bei der Berechnung der Mithörschwelle aufgetreten!"
+        )
 
 
 # Berechnung der "geglätteten" Mithörschwelle mithilfe der smoothing_line
@@ -240,7 +242,9 @@ def signal(freq_center, volume, xy):
 def cut_to_thirds(signal):
     """cuts a single broadband noise into multiple third bands"""
     if signal[0] < 0 or signal[1] < 0:
-        raise Exception('Fehler bei der Berechnung: Frequenzen dürfen nicht negativ sein!')
+        raise Exception(
+            "Fehler bei der Berechnung: Frequenzen dürfen nicht negativ sein!"
+        )
     start = get_third_band(signal[0], "low")
     end = get_third_band(signal[1], "high")
     curr_band = start
@@ -293,7 +297,7 @@ def get_volumes(signal, type):
                     distance = len(cut_to_thirds((16, freq_high))) - 1
                     level = signal[n][2] - distance
                     volumes.append(level)
-                else: 
+                else:
                     level = signal[n][2] - gap
                     volumes.append(level)
     elif type == "rot":
@@ -305,7 +309,7 @@ def get_volumes(signal, type):
                 if freq_high <= 500:
                     level = signal[n][2] - (distance * 2)
                     volumes.append(level)
-                else: 
+                else:
                     level = signal[n][2] - gap - distance
                     volumes.append(level)
     elif type == "blau":
@@ -319,7 +323,7 @@ def get_volumes(signal, type):
                     volumes.append(level)
                 else:
                     distance = len(cut_to_thirds((500, freq_high))) - 1
-                    level = signal[n][2] + (distance * 2) +  gap
+                    level = signal[n][2] + (distance * 2) + gap
                     volumes.append(level)
     return volumes
 
@@ -335,3 +339,11 @@ def fill_signal(signal):
             filled_signal.append((signal[n][1], signal[n + 1][0], -100))
         filled_signal.append(signal[n + 1])
     return filled_signal
+
+
+def round_list(values):
+    """rounds all values in a given list with 1 decimal"""
+    rounded = []
+    for value in values:
+        rounded.append(round(value, 1))
+    return rounded

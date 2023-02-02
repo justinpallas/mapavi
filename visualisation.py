@@ -30,21 +30,25 @@ def testdata(choice):
         testdata.test_level = 60
     elif choice == "nicht anzeigen":
         testdata.bool = False
-    print(
-        "showing testdata for"
-        + str(testdata.test_freq)
-        + " Hz and "
-        + str(testdata.test_level)
-        + " dB"
-    )
+        print("showing no testdata")
+    if choice != "nicht anzeigen":
+        print(
+            "showing testdata for "
+            + str(testdata.test_freq)
+            + " Hz and "
+            + str(testdata.test_level)
+            + " dB"
+        )
 
 
 def thirdbands(switch):
     thirdbands.show = True
     if switch == "on":
         thirdbands.show = True
+        print("displaying thirdbands")
     if switch == "off":
         thirdbands.show = False
+        print("not displaying thirdbands")
 
 
 testdata("nicht anzeigen")

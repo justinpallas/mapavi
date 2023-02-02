@@ -444,32 +444,91 @@ class App(customtkinter.CTk):
 
         # Tab Datei Laden
         tab_3 = self.tabview.tab("Datei Laden")
+        tab_3.grid_rowconfigure(0, weight=1)
+        self.thirdband_frame = customtkinter.CTkFrame(tab_3, width=100, height=500)
+        self.thirdband_frame.grid(row=0, column=3, padx=0, pady=0)
+        self.thirdband_frame.grid_columnconfigure(3, weight=1)
+        self.loadfile_frame = customtkinter.CTkFrame(tab_3, width=850, height=800)
+        self.loadfile_frame.grid(row=0, column=0, padx=0, pady=0)
+        self.amplifier_frame = customtkinter.CTkFrame(tab_3, width=100, height=500)
+        self.amplifier_frame.grid(row=0, column=2, padx=20, pady=0)
         self.tab_3_header_label_1 = customtkinter.CTkLabel(
-            tab_3,
+            self.loadfile_frame,
             text="Datei zur Berechnung der Mithörschwelle auswählen "
             "(WAV- oder Excel-Datei)",
         )
-        self.tab_3_header_label_1.grid(row=0, column=0, padx=20, pady=(5, 20))
+        self.tab_3_header_label_1.grid(row=0, column=0, padx=50, pady=(5, 20))
         # Datei Laden button
         self.load_file_button = customtkinter.CTkButton(
-            tab_3, text="Datei auswählen", command=self.select_file
+            self.loadfile_frame, text="Datei auswählen", command=self.select_file
         )
         self.load_file_button.grid(row=1, column=0, padx=20, pady=(50, 0))
-        self.file_label = customtkinter.CTkLabel(tab_3, text="Datei ausgewählt:")
+        self.file_label = customtkinter.CTkLabel(
+            self.loadfile_frame, text="Datei ausgewählt:"
+        )
         self.file_label.grid(row=2, column=0, padx=20, pady=(10, 0))
         self.selected_file_label = customtkinter.CTkLabel(
-            tab_3,
+            self.loadfile_frame,
             text="keine",
             fg_color=["grey95", "grey10"],
             text_color=["grey40", "grey60"],
             corner_radius=8,
         )
         self.selected_file_label.grid(row=3, column=0, padx=20, pady=(5, 0))
+        # Terzpegel anzeigen
+        self.third_levels_header = customtkinter.CTkLabel(
+            self.thirdband_frame, text="Pegel\n in dB"
+        )
+        self.third_levels_header.grid(row=0, column=0, padx=5, pady=(10, 0))
+        self.third_levels_label = customtkinter.CTkLabel(
+            self.thirdband_frame,
+            text="",
+            fg_color=["grey95", "grey10"],
+            text_color=["grey40", "grey60"],
+            corner_radius=8,
+            wraplength=40,
+            height=500,
+            width=50,
+        )
+        self.third_levels_label.grid(row=2, column=0, padx=5, pady=(10, 0))
+        self.third_freqs_header = customtkinter.CTkLabel(
+            self.thirdband_frame, text="Freq\n in Hz"
+        )
+        self.third_freqs_header.grid(row=0, column=1, padx=10, pady=(10, 0))
+        self.third_freqs_label = customtkinter.CTkLabel(
+            self.thirdband_frame,
+            text="",
+            fg_color=["grey95", "grey10"],
+            text_color=["grey40", "grey60"],
+            corner_radius=8,
+            wraplength=50,
+            height=500,
+            width=50,
+        )
+        self.third_freqs_label.grid(row=2, column=1, padx=10, pady=(10, 0))
+        # Terzbänder auslesen Button
+        self.file_read_button = customtkinter.CTkButton(
+            self.amplifier_frame,
+            text="Terzpegel auslesen",
+            command=self.read_third_levels,
+        )
+        self.file_read_button.grid(row=0, column=0, padx=20, pady=(20, 0))
+        # Verstärkung Eingabe
+        self.amplifier_label = customtkinter.CTkLabel(
+            self.amplifier_frame, text="Verstärkung in dB:"
+        )
+        self.amplifier_label.grid(row=2, column=0, padx=20, pady=(50, 0))
+        self.amplifier_entry = customtkinter.CTkEntry(
+            self.amplifier_frame, placeholder_text="Verstärkung"
+        )
+        self.amplifier_entry.grid(row=3, column=0, padx=20, pady=(10, 0))
         # Mithörschwelle berechnen button
         self.file_submit_button = customtkinter.CTkButton(
-            tab_3, text="Mithörschwelle berechnen", command=self.calculate_from_file
+            self.loadfile_frame,
+            text="Mithörschwelle berechnen",
+            command=self.calculate_from_file,
         )
-        self.file_submit_button.grid(row=4, column=0, padx=20, pady=(100, 0))
+        self.file_submit_button.grid(row=7, column=0, padx=20, pady=(80, 30))
 
         # Fehlermeldung
         self.error_message = customtkinter.CTkLabel(self, text="", text_color="red")
@@ -613,9 +672,30 @@ class App(customtkinter.CTk):
             graph.close_plots()
             if self.filename == "":
                 raise AttributeError
-            freqs, levels = analyzed.load_file(self.filename)
+            amp_entry = self.amplifier_entry.get()
+            if amp_entry == "":
+                amp_entry = "0"
+            self.validate([amp_entry])
+            amp = float(amp_entry)
+            freqs, levels = analyzed.load_file(self.filename, amp)
             self.error_message.grid_remove()
             graph.render_plots(data.samples(), freqs, levels)
+        except AttributeError:
+            self.show_error("Keine Datei ausgewählt!")
+        except Exception as err:
+            self.show_error(err)
+
+    # Terzpegel aus Datei auslesen und anzeigen
+    def read_third_levels(self):
+        try:
+            if self.filename == "":
+                raise AttributeError
+            spl, freq = analyzed.get_third_levels(self.filename)
+            self.error_message.grid_remove()
+            rounded_spl = calc.round_list(spl)
+            rounded_freq = calc.round_list(freq)
+            self.third_levels_label.configure(text=rounded_spl)
+            self.third_freqs_label.configure(text=rounded_freq)
         except AttributeError:
             self.show_error("Keine Datei ausgewählt!")
         except Exception as err:
@@ -641,5 +721,5 @@ class App(customtkinter.CTk):
 
 if __name__ == "__main__":
     app = App()
-    app.iconbitmap('./assets/mapavi_icon_256.ico')
+    app.iconbitmap("./assets/mapavi_icon_256.ico")
     app.mainloop()
