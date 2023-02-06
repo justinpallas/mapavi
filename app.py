@@ -22,7 +22,7 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("MaPaVi - Masking Pattern Visualizer")
-        self.geometry(f"{1350}x{780}")
+        self.geometry(f"{1450}x{880}")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -59,15 +59,6 @@ class App(customtkinter.CTk):
             variable=self.testdata_var,
         )
         self.testdata_selection.grid(row=2, column=0, padx=20, pady=(5, 0))
-        # Rauschtyp Auswahl
-        self.noise_selector_label = customtkinter.CTkLabel(
-            self.sidebar_frame, text="Rauschtyp:"
-        )
-        self.noise_selector_label.grid(row=5, column=0, padx=20, pady=(0, 0))
-        self.noise_selector = customtkinter.CTkOptionMenu(
-            self.sidebar_frame, values=["blau", "weiß", "rosa", "rot", "GAR", "GVR"]
-        )
-        self.noise_selector.grid(row=6, column=0, padx=20, pady=(0, 0))
         self.show_thirdbands = customtkinter.StringVar(value="on")
         self.show_thirdbands_switch = customtkinter.CTkSwitch(
             self.sidebar_frame,
@@ -90,13 +81,13 @@ class App(customtkinter.CTk):
         self.appearance_mode_optionemenu.grid(row=9, column=0, padx=20, pady=(10, 20))
 
         # create tabview
-        self.tabview = customtkinter.CTkTabview(self, width=750, height=500)
+        self.tabview = customtkinter.CTkTabview(self, width=750, height=600)
         self.tabview.grid(row=0, column=1, padx=(20, 20), pady=(20, 0), sticky="nsew")
         self.tabview.add("Breitbandiges Signal")
         self.tabview.add("Einzelne Terzbänder")
         self.tabview.add("Datei Laden")
         self.tabview.tab("Breitbandiges Signal").grid_columnconfigure(
-            4, weight=1
+            1, weight=1
         )  # configure grid of individual tabs
         self.tabview.tab("Einzelne Terzbänder").grid_columnconfigure(3, weight=1)
         self.tabview.tab("Datei Laden").grid_columnconfigure(0, weight=1)
@@ -104,39 +95,57 @@ class App(customtkinter.CTk):
         # Tab Breitbandiges Signal
         tab_1 = self.tabview.tab("Breitbandiges Signal")
         self.freqband_count = 0
+        self.tab_1_entry_frame = customtkinter.CTkFrame(tab_1, width=800, height=800)
+        self.tab_1_entry_frame.grid(row=0, column=0, padx=5, pady=10)
+        self.tab_1_control_frame = customtkinter.CTkFrame(tab_1, width=200, height=800)
+        self.tab_1_control_frame.grid(row=0, column=2, padx=5, pady=10, sticky="N")
 
-        self.tab_1_header_label_1 = customtkinter.CTkLabel(tab_1, text="Frequenzband")
+        self.tab_1_header_label_1 = customtkinter.CTkLabel(
+            self.tab_1_entry_frame, text="Frequenzband"
+        )
         self.tab_1_header_label_1.grid(row=0, column=0, padx=20, pady=(5, 20))
         self.tab_1_header_label_2 = customtkinter.CTkLabel(
-            tab_1, text="Untere Grenzfrequenz\n (f1) in Hz"
+            self.tab_1_entry_frame, text="Untere Grenzfrequenz\n (f1) in Hz"
         )
         self.tab_1_header_label_2.grid(row=0, column=1, padx=20, pady=(5, 20))
         self.tab_1_header_label_3 = customtkinter.CTkLabel(
-            tab_1, text="Obere Grenzfrequenz\n (f2) in Hz"
+            self.tab_1_entry_frame, text="Obere Grenzfrequenz\n (f2) in Hz"
         )
         self.tab_1_header_label_3.grid(row=0, column=2, padx=20, pady=(5, 20))
         self.tab_1_header_label_4 = customtkinter.CTkLabel(
-            tab_1, text="Pegel(L)\n in dB"
+            self.tab_1_entry_frame, text="Pegel(L)\n in dB"
         )
         self.tab_1_header_label_4.grid(row=0, column=3, padx=20, pady=(5, 20))
+        # Rauschtyp Auswahl
+        self.noise_selector_label = customtkinter.CTkLabel(
+            self.tab_1_control_frame, text="Rauschtyp:"
+        )
+        self.noise_selector_label.grid(row=0, column=0, padx=20, pady=(0, 0))
+        self.noise_selector = customtkinter.CTkOptionMenu(
+            self.tab_1_control_frame,
+            values=["blau", "weiß", "rosa", "rot", "GAR", "GVR"],
+        )
+        self.noise_selector.grid(row=1, column=0, padx=20, pady=(0, 0))
         # Berechnen Button
         self.thirdbands_submit_button = customtkinter.CTkButton(
-            tab_1, text="Mithörschwelle\n Berechnen", command=self.calculate_from_signal
+            self.tab_1_control_frame,
+            text="Mithörschwelle\n Berechnen",
+            command=self.calculate_from_signal,
         )
-        self.thirdbands_submit_button.grid(row=0, column=5, padx=20, pady=(5, 0))
+        self.thirdbands_submit_button.grid(row=3, column=0, padx=20, pady=(65, 20))
         # Frequenzband hinzufügen Button
         self.add_freqband_button = customtkinter.CTkButton(
-            tab_1,
+            self.tab_1_entry_frame,
             text="Band hinzufügen\n (+)",
             command=self.add_freqband,
             fg_color="transparent",
             border_width=2,
             text_color=("gray10", "#DCE4EE"),
         )
-        self.add_freqband_button.grid(row=9, column=0, padx=20, pady=(30, 0))
+        self.add_freqband_button.grid(row=9, column=0, padx=20, pady=(30, 20))
         # Frequenzband entfernen Button
         self.remove_freqband_button = customtkinter.CTkButton(
-            tab_1,
+            self.tab_1_entry_frame,
             text="Band entfernen \n (-)",
             command=self.remove_freqband,
             state="disabled",
@@ -144,102 +153,144 @@ class App(customtkinter.CTk):
             border_width=2,
             text_color=("gray10", "#DCE4EE"),
         )
-        self.remove_freqband_button.grid(row=9, column=1, padx=20, pady=(30, 0))
+        self.remove_freqband_button.grid(row=9, column=1, padx=20, pady=(30, 20))
         # Freqband label
-        self.freqband_label_1 = customtkinter.CTkLabel(tab_1, text="Frequenzband 1")
+        self.freqband_label_1 = customtkinter.CTkLabel(
+            self.tab_1_entry_frame, text="Frequenzband 1"
+        )
         self.freqband_label_1.grid(row=1, column=0, padx=20, pady=(5, 0))
-        self.freqband_label_2 = customtkinter.CTkLabel(tab_1, text="Frequenzband 2")
+        self.freqband_label_2 = customtkinter.CTkLabel(
+            self.tab_1_entry_frame, text="Frequenzband 2"
+        )
         self.freqband_label_2.grid(row=2, column=0, padx=20, pady=(5, 0))
         self.freqband_label_2.grid_remove()
-        self.freqband_label_3 = customtkinter.CTkLabel(tab_1, text="Frequenzband 3")
+        self.freqband_label_3 = customtkinter.CTkLabel(
+            self.tab_1_entry_frame, text="Frequenzband 3"
+        )
         self.freqband_label_3.grid(row=3, column=0, padx=20, pady=(5, 0))
         self.freqband_label_3.grid_remove()
-        self.freqband_label_4 = customtkinter.CTkLabel(tab_1, text="Frequenzband 4")
+        self.freqband_label_4 = customtkinter.CTkLabel(
+            self.tab_1_entry_frame, text="Frequenzband 4"
+        )
         self.freqband_label_4.grid(row=4, column=0, padx=20, pady=(5, 0))
         self.freqband_label_4.grid_remove()
-        self.freqband_label_5 = customtkinter.CTkLabel(tab_1, text="Frequenzband 5")
+        self.freqband_label_5 = customtkinter.CTkLabel(
+            self.tab_1_entry_frame, text="Frequenzband 5"
+        )
         self.freqband_label_5.grid(row=5, column=0, padx=20, pady=(5, 0))
         self.freqband_label_5.grid_remove()
-        self.freqband_label_6 = customtkinter.CTkLabel(tab_1, text="Frequenzband 6")
+        self.freqband_label_6 = customtkinter.CTkLabel(
+            self.tab_1_entry_frame, text="Frequenzband 6"
+        )
         self.freqband_label_6.grid(row=6, column=0, padx=20, pady=(5, 0))
         self.freqband_label_6.grid_remove()
-        self.freqband_label_7 = customtkinter.CTkLabel(tab_1, text="Frequenzband 7")
+        self.freqband_label_7 = customtkinter.CTkLabel(
+            self.tab_1_entry_frame, text="Frequenzband 7"
+        )
         self.freqband_label_7.grid(row=7, column=0, padx=20, pady=(5, 0))
         self.freqband_label_7.grid_remove()
         # Untere Grenzfrequenz f1 Eingabefelder
-        self.entry_f1_1 = customtkinter.CTkEntry(tab_1, placeholder_text="f1")
+        self.entry_f1_1 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f1"
+        )
         self.entry_f1_1.grid(row=1, column=1, padx=20, pady=(5, 0))
-        self.entry_f1_2 = customtkinter.CTkEntry(tab_1, placeholder_text="f1")
+        self.entry_f1_2 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f1"
+        )
         self.entry_f1_2.grid(row=2, column=1, padx=20, pady=(5, 0))
         self.entry_f1_2.grid_remove()
-        self.entry_f1_3 = customtkinter.CTkEntry(tab_1, placeholder_text="f1")
+        self.entry_f1_3 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f1"
+        )
         self.entry_f1_3.grid(row=3, column=1, padx=20, pady=(5, 0))
         self.entry_f1_3.grid_remove()
-        self.entry_f1_4 = customtkinter.CTkEntry(tab_1, placeholder_text="f1")
+        self.entry_f1_4 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f1"
+        )
         self.entry_f1_4.grid(row=4, column=1, padx=20, pady=(5, 0))
         self.entry_f1_4.grid_remove()
-        self.entry_f1_5 = customtkinter.CTkEntry(tab_1, placeholder_text="f1")
+        self.entry_f1_5 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f1"
+        )
         self.entry_f1_5.grid(row=5, column=1, padx=20, pady=(5, 0))
         self.entry_f1_5.grid_remove()
-        self.entry_f1_6 = customtkinter.CTkEntry(tab_1, placeholder_text="f1")
+        self.entry_f1_6 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f1"
+        )
         self.entry_f1_6.grid(row=6, column=1, padx=20, pady=(5, 0))
         self.entry_f1_6.grid_remove()
-        self.entry_f1_7 = customtkinter.CTkEntry(tab_1, placeholder_text="f1")
+        self.entry_f1_7 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f1"
+        )
         self.entry_f1_7.grid(row=7, column=1, padx=20, pady=(5, 0))
         self.entry_f1_7.grid_remove()
         # Obere Grenzfrequenz f2 Eingabefelder
-        self.entry_f2_1 = customtkinter.CTkEntry(tab_1, placeholder_text="f2")
+        self.entry_f2_1 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f2"
+        )
         self.entry_f2_1.grid(row=1, column=2, padx=20, pady=(5, 0))
-        self.entry_f2_2 = customtkinter.CTkEntry(tab_1, placeholder_text="f2")
+        self.entry_f2_2 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f2"
+        )
         self.entry_f2_2.grid(row=2, column=2, padx=20, pady=(5, 0))
         self.entry_f2_2.grid_remove()
-        self.entry_f2_3 = customtkinter.CTkEntry(tab_1, placeholder_text="f2")
+        self.entry_f2_3 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f2"
+        )
         self.entry_f2_3.grid(row=3, column=2, padx=20, pady=(5, 0))
         self.entry_f2_3.grid_remove()
-        self.entry_f2_4 = customtkinter.CTkEntry(tab_1, placeholder_text="f2")
+        self.entry_f2_4 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f2"
+        )
         self.entry_f2_4.grid(row=4, column=2, padx=20, pady=(5, 0))
         self.entry_f2_4.grid_remove()
-        self.entry_f2_5 = customtkinter.CTkEntry(tab_1, placeholder_text="f2")
+        self.entry_f2_5 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f2"
+        )
         self.entry_f2_5.grid(row=5, column=2, padx=20, pady=(5, 0))
         self.entry_f2_5.grid_remove()
-        self.entry_f2_6 = customtkinter.CTkEntry(tab_1, placeholder_text="f2")
+        self.entry_f2_6 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f2"
+        )
         self.entry_f2_6.grid(row=6, column=2, padx=20, pady=(5, 0))
         self.entry_f2_6.grid_remove()
-        self.entry_f2_7 = customtkinter.CTkEntry(tab_1, placeholder_text="f2")
+        self.entry_f2_7 = customtkinter.CTkEntry(
+            self.tab_1_entry_frame, placeholder_text="f2"
+        )
         self.entry_f2_7.grid(row=7, column=2, padx=20, pady=(5, 0))
         self.entry_f2_7.grid_remove()
         # Pegel Eingabefelder
         self.tab_1_entry_level_1 = customtkinter.CTkEntry(
-            tab_1, placeholder_text="Pegel"
+            self.tab_1_entry_frame, placeholder_text="Pegel"
         )
         self.tab_1_entry_level_1.grid(row=1, column=3, padx=20, pady=(5, 0))
         self.tab_1_entry_level_2 = customtkinter.CTkEntry(
-            tab_1, placeholder_text="Pegel"
+            self.tab_1_entry_frame, placeholder_text="Pegel"
         )
         self.tab_1_entry_level_2.grid(row=2, column=3, padx=20, pady=(5, 0))
         self.tab_1_entry_level_2.grid_remove()
         self.tab_1_entry_level_3 = customtkinter.CTkEntry(
-            tab_1, placeholder_text="Pegel"
+            self.tab_1_entry_frame, placeholder_text="Pegel"
         )
         self.tab_1_entry_level_3.grid(row=3, column=3, padx=20, pady=(5, 0))
         self.tab_1_entry_level_3.grid_remove()
         self.tab_1_entry_level_4 = customtkinter.CTkEntry(
-            tab_1, placeholder_text="Pegel"
+            self.tab_1_entry_frame, placeholder_text="Pegel"
         )
         self.tab_1_entry_level_4.grid(row=4, column=3, padx=20, pady=(5, 0))
         self.tab_1_entry_level_4.grid_remove()
         self.tab_1_entry_level_5 = customtkinter.CTkEntry(
-            tab_1, placeholder_text="Pegel"
+            self.tab_1_entry_frame, placeholder_text="Pegel"
         )
         self.tab_1_entry_level_5.grid(row=5, column=3, padx=20, pady=(5, 0))
         self.tab_1_entry_level_5.grid_remove()
         self.tab_1_entry_level_6 = customtkinter.CTkEntry(
-            tab_1, placeholder_text="Pegel"
+            self.tab_1_entry_frame, placeholder_text="Pegel"
         )
         self.tab_1_entry_level_6.grid(row=6, column=3, padx=20, pady=(5, 0))
         self.tab_1_entry_level_6.grid_remove()
         self.tab_1_entry_level_7 = customtkinter.CTkEntry(
-            tab_1, placeholder_text="Pegel"
+            self.tab_1_entry_frame, placeholder_text="Pegel"
         )
         self.tab_1_entry_level_7.grid(row=7, column=3, padx=20, pady=(5, 0))
         self.tab_1_entry_level_7.grid_remove()
@@ -446,12 +497,12 @@ class App(customtkinter.CTk):
         tab_3 = self.tabview.tab("Datei Laden")
         tab_3.grid_rowconfigure(0, weight=1)
         self.thirdband_frame = customtkinter.CTkFrame(tab_3, width=100, height=500)
-        self.thirdband_frame.grid(row=0, column=3, padx=0, pady=0)
+        self.thirdband_frame.grid(row=0, column=3, padx=0, pady=0, sticky="N")
         self.thirdband_frame.grid_columnconfigure(3, weight=1)
         self.loadfile_frame = customtkinter.CTkFrame(tab_3, width=850, height=800)
-        self.loadfile_frame.grid(row=0, column=0, padx=0, pady=0)
+        self.loadfile_frame.grid(row=0, column=0, padx=0, pady=0, sticky="N")
         self.amplifier_frame = customtkinter.CTkFrame(tab_3, width=100, height=500)
-        self.amplifier_frame.grid(row=0, column=2, padx=20, pady=0)
+        self.amplifier_frame.grid(row=0, column=2, padx=20, pady=0, sticky="N")
         self.tab_3_header_label_1 = customtkinter.CTkLabel(
             self.loadfile_frame,
             text="Datei zur Berechnung der Mithörschwelle auswählen "
@@ -531,7 +582,7 @@ class App(customtkinter.CTk):
             onvalue="on",
             offvalue="off",
         )
-        self.show_amp_switch.grid(row=4, column=0, padx=20, pady=(30, 0))
+        self.show_amp_switch.grid(row=4, column=0, padx=20, pady=(30, 10))
         # Mithörschwelle berechnen button
         self.file_submit_button = customtkinter.CTkButton(
             self.loadfile_frame,
