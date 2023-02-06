@@ -294,37 +294,41 @@ def get_volumes(signal, type):
             thirds = cut_to_thirds(signal[n])
             for z in thirds:
                 freq_high = z[2]
-                if freq_high <= 500:
-                    distance = len(cut_to_thirds((16, freq_high))) - 1
-                    level = signal[n][2] - distance
+                freq_low = z[0]
+                if freq_high < 500:
+                    distance = len(cut_to_thirds((freq_low, 500))) - 1
+                    level = signal[n][2] + distance
                     volumes.append(level)
                 else:
-                    level = signal[n][2] - gap
+                    level = signal[n][2]
                     volumes.append(level)
     elif type == "rot":
         for n in range(len(signal)):
             thirds = cut_to_thirds(signal[n])
             for z in thirds:
                 freq_high = z[2]
-                distance = len(cut_to_thirds((16, freq_high))) - 1
-                if freq_high <= 500:
-                    level = signal[n][2] - (distance * 2)
+                freq_low = z[0]
+                distance_low = len(cut_to_thirds((freq_low, 500))) - 1
+                distance_high = len(cut_to_thirds((500, freq_high))) - 1
+                if freq_high < 500:
+                    level = signal[n][2] + (distance_low * 2)
                     volumes.append(level)
                 else:
-                    level = signal[n][2] - gap - distance
+                    level = signal[n][2] - distance_high
                     volumes.append(level)
     elif type == "blau":
         for n in range(len(signal)):
             thirds = cut_to_thirds(signal[n])
             for z in thirds:
                 freq_high = z[2]
-                if freq_high <= 500:
-                    distance = len(cut_to_thirds((16, freq_high))) - 1
-                    level = signal[n][2] + distance
+                freq_low = z[0]
+                if freq_high < 500:
+                    distance = len(cut_to_thirds((freq_low, 500))) - 1
+                    level = signal[n][2] - distance
                     volumes.append(level)
                 else:
                     distance = len(cut_to_thirds((500, freq_high))) - 1
-                    level = signal[n][2] + (distance * 2) + gap
+                    level = signal[n][2] + (distance * 2)
                     volumes.append(level)
     return volumes
 
