@@ -86,11 +86,13 @@ class App(customtkinter.CTk):
         self.tabview.add("Breitbandiges Signal")
         self.tabview.add("Einzelne Terzbänder")
         self.tabview.add("Datei Laden")
+        self.tabview.add("Terzbandrechner")
         self.tabview.tab("Breitbandiges Signal").grid_columnconfigure(
             1, weight=1
         )  # configure grid of individual tabs
         self.tabview.tab("Einzelne Terzbänder").grid_columnconfigure(1, weight=1)
         self.tabview.tab("Datei Laden").grid_columnconfigure(0, weight=1)
+        self.tabview.tab("Terzbandrechner").grid_columnconfigure(0, weight=1)
 
         # Tab Breitbandiges Signal
         tab_1 = self.tabview.tab("Breitbandiges Signal")
@@ -369,7 +371,7 @@ class App(customtkinter.CTk):
             border_width=2,
             text_color=("gray10", "#DCE4EE"),
         )
-        self.add_thirdband_button.grid(row=17, column=1, padx=10, pady=(30, 0))
+        self.add_thirdband_button.grid(row=17, column=1, padx=10, pady=(30, 20))
         # Terzband entfernen Button
         self.remove_thirdband_button = customtkinter.CTkButton(
             self.tab_2_entry_frame,
@@ -380,7 +382,7 @@ class App(customtkinter.CTk):
             border_width=2,
             text_color=("gray10", "#DCE4EE"),
         )
-        self.remove_thirdband_button.grid(row=17, column=2, padx=10, pady=(30, 0))
+        self.remove_thirdband_button.grid(row=17, column=2, padx=10, pady=(30, 20))
         # Terzband label
         self.thirdband_label_1 = customtkinter.CTkLabel(
             self.tab_2_entry_frame, text="Terzband 1", width=50
@@ -1026,6 +1028,80 @@ class App(customtkinter.CTk):
         )
         self.file_submit_button.grid(row=7, column=0, padx=20, pady=(80, 30))
 
+        # Tab Terzband berechnen
+        tab_4 = self.tabview.tab("Terzbandrechner")
+        self.tab_4_control_frame = customtkinter.CTkFrame(tab_4)
+        self.tab_4_control_frame.grid(row=1, column=0, padx=10, pady=10)
+        self.tab_4_show_frame = customtkinter.CTkFrame(tab_4)
+        self.tab_4_show_frame.grid(row=2, column=0, padx=10, pady=20)
+
+        self.tab_4_header_label = customtkinter.CTkLabel(
+            tab_4,
+            text="Hier können Terzbänder zu entsprechenden Mittenfrequenzen (fc),\noder den unteren und oberen Grenzfrequenzen f1 und f2 berechnet werden",
+        )
+        self.tab_4_header_label.grid(row=0, column=0, padx=20, pady=(20, 0))
+
+        self.tab_4_freq_entry = customtkinter.CTkEntry(
+            self.tab_4_control_frame, placeholder_text="Frequenz"
+        )
+        self.tab_4_freq_entry.grid(row=1, column=1, padx=20, pady=20)
+        self.tab_4_param_selector = customtkinter.CTkOptionMenu(
+            self.tab_4_control_frame,
+            values=[
+                "untere Grenzfrequenz (f1)",
+                "obere Grenzfrequenz (f2)",
+                "Mittenfrequenz (fc)",
+            ],
+        )
+        self.tab_4_param_selector.grid(row=1, column=0, padx=20, pady=20)
+        self.tab_4_submit_button = customtkinter.CTkButton(
+            self.tab_4_control_frame,
+            text="Terzband berechnen",
+            command=self.calculate_thirdband,
+        )
+        self.tab_4_submit_button.grid(row=1, column=2, padx=20, pady=20)
+
+        self.tab_4_result_label = customtkinter.CTkLabel(
+            self.tab_4_show_frame, text="Ermitteltes Terzband:"
+        )
+        self.tab_4_result_label.grid(row=0, column=0, padx=20, pady=20)
+        self.tab_4_f1_label = customtkinter.CTkLabel(
+            self.tab_4_show_frame, text="untere Grenzfrequenz (f1):"
+        )
+        self.f1_result = customtkinter.CTkLabel(
+            self.tab_4_show_frame,
+            text="keine",
+            fg_color=["grey95", "grey10"],
+            text_color=["grey40", "grey60"],
+            corner_radius=8,
+        )
+        self.f1_result.grid(row=1, column=1, padx=20, pady=(10, 0))
+        self.tab_4_f1_label.grid(row=1, column=0, padx=20, pady=(10, 0))
+        self.tab_4_fc_label = customtkinter.CTkLabel(
+            self.tab_4_show_frame, text="Mittenfrequenz (fc):"
+        )
+        self.fc_result = customtkinter.CTkLabel(
+            self.tab_4_show_frame,
+            text="keine",
+            fg_color=["grey95", "grey10"],
+            text_color=["grey40", "grey60"],
+            corner_radius=8,
+        )
+        self.fc_result.grid(row=2, column=1, padx=20, pady=(10, 0))
+        self.tab_4_fc_label.grid(row=2, column=0, padx=20, pady=(10, 0))
+        self.tab_4_f2_label = customtkinter.CTkLabel(
+            self.tab_4_show_frame, text="obere Grenzfrequenz (f2):"
+        )
+        self.tab_4_f2_label.grid(row=3, column=0, padx=20, pady=(10, 20))
+        self.f2_result = customtkinter.CTkLabel(
+            self.tab_4_show_frame,
+            text="keine",
+            fg_color=["grey95", "grey10"],
+            text_color=["grey40", "grey60"],
+            corner_radius=8,
+        )
+        self.f2_result.grid(row=3, column=1, padx=20, pady=(10, 20))
+
         # Fehlermeldung
         self.error_message = customtkinter.CTkLabel(self, text="", text_color="red")
 
@@ -1099,7 +1175,12 @@ class App(customtkinter.CTk):
             elif i.isspace():
                 msg = "Ein oder mehrere Felder sind leer! Alle Felder müssen ausgefüllt sein!"
                 raise Exception(msg)
-            elif i.lstrip("+-").isnumeric() is False:
+            # elif i.lstrip("+-").isnumeric() is False:
+            #     msg = "Ein oder mehrere Felder enthalten ungültige Werte! Bitte nur Zahlen eingeben!"
+            #     raise Exception(msg)
+            try:
+                float(i)
+            except ValueError:
                 msg = "Ein oder mehrere Felder enthalten ungültige Werte! Bitte nur Zahlen eingeben!"
                 raise Exception(msg)
 
@@ -1116,9 +1197,9 @@ class App(customtkinter.CTk):
         noise_type = self.noise_selector.get()
         try:
             for n in range(i + 1):
-                f1_entry = self.f1_entry_list[n].get()
-                f2_entry = self.f2_entry_list[n].get()
-                level_entry = self.tab_1_level_entry_list[n].get()
+                f1_entry = self.f1_entry_list[n].get().replace(",", ".")
+                f2_entry = self.f2_entry_list[n].get().replace(",", ".")
+                level_entry = self.tab_1_level_entry_list[n].get().replace(",", ".")
                 self.validate((f1_entry, f2_entry, level_entry))
                 f1 = float(f1_entry)
                 f2 = float(f2_entry)
@@ -1149,8 +1230,8 @@ class App(customtkinter.CTk):
         levels = []
         try:
             for n in range(i + 1):
-                fc_entry = self.fc_entry_list[n].get()
-                level_entry = self.tab_2_level_entry_list[n].get()
+                fc_entry = self.fc_entry_list[n].get().replace(",", ".")
+                level_entry = self.tab_2_level_entry_list[n].get().replace(",", ".")
                 self.validate((fc_entry, level_entry))
                 fc = float(fc_entry)
                 level = float(level_entry)
@@ -1168,7 +1249,7 @@ class App(customtkinter.CTk):
             graph.close_plots()
             if self.filename == "":
                 raise AttributeError(msg)
-            amp_entry = self.amplifier_entry.get()
+            amp_entry = self.amplifier_entry.get().replace(",", ".")
             if amp_entry == "":
                 amp_entry = "0"
             self.validate([amp_entry])
@@ -1230,6 +1311,27 @@ class App(customtkinter.CTk):
     def thirdband_switch(self):
         switch = self.show_thirdbands.get()
         graph.thirdbands(switch)
+
+    # Terzband zu angegebener Frequenz berechnen
+    def calculate_thirdband(self):
+        try:
+            self.error_message.grid_remove()
+            choice = self.tab_4_param_selector.get()
+            freq_entry = self.tab_4_freq_entry.get().replace(",", ".")
+            self.validate([freq_entry])
+            freq = float(freq_entry)
+            if choice == "untere Grenzfrequenz (f1)":
+                param = "low"
+            elif choice == "obere Grenzfrequenz (f2)":
+                param = "high"
+            elif choice == "Mittenfrequenz (fc)":
+                param = "center"
+            thirdband = calc.round_list(calc.get_third_band(freq, param))
+            self.f1_result.configure(text=str(thirdband[0]) + " Hz")
+            self.fc_result.configure(text=str(thirdband[1]) + " Hz")
+            self.f2_result.configure(text=str(thirdband[2]) + " Hz")
+        except Exception as err:
+            self.show_error(err)
 
 
 if __name__ == "__main__":
