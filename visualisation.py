@@ -174,6 +174,7 @@ def render_plots(x, freq_center, volume, smooth=True, show_calibration="none"):
             show_calibration,
             style="italic",
             bbox={"facecolor": "green", "alpha": 0.5, "pad": 10},
+            fontsize=16,
         )
         ax2.text(
             28,
@@ -181,6 +182,7 @@ def render_plots(x, freq_center, volume, smooth=True, show_calibration="none"):
             show_calibration,
             style="italic",
             bbox={"facecolor": "green", "alpha": 0.5, "pad": 10},
+            fontsize=16,
         )
 
     # -- Anzeigen der Diagramme --
