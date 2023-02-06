@@ -22,7 +22,7 @@ class App(customtkinter.CTk):
 
         # configure window
         self.title("MaPaVi - Masking Pattern Visualizer")
-        self.geometry(f"{1450}x{880}")
+        self.geometry(f"{1500}x{920}")
 
         # configure grid layout (4x4)
         self.grid_columnconfigure(1, weight=1)
@@ -89,7 +89,7 @@ class App(customtkinter.CTk):
         self.tabview.tab("Breitbandiges Signal").grid_columnconfigure(
             1, weight=1
         )  # configure grid of individual tabs
-        self.tabview.tab("Einzelne Terzbänder").grid_columnconfigure(3, weight=1)
+        self.tabview.tab("Einzelne Terzbänder").grid_columnconfigure(1, weight=1)
         self.tabview.tab("Datei Laden").grid_columnconfigure(0, weight=1)
 
         # Tab Breitbandiges Signal
@@ -335,37 +335,44 @@ class App(customtkinter.CTk):
 
         tab_2 = self.tabview.tab("Einzelne Terzbänder")
         self.thirdband_count = 0
+        self.tab_2_entry_frame = customtkinter.CTkFrame(tab_2, width=800, height=800)
+        self.tab_2_entry_frame.grid(row=0, column=0, padx=5, pady=10)
+        self.tab_2_control_frame = customtkinter.CTkFrame(tab_2, width=200, height=800)
+        self.tab_2_control_frame.grid(row=0, column=2, padx=5, pady=10, sticky="N")
 
-        self.tab_2_header_label_1 = customtkinter.CTkLabel(tab_2, text="Terzband")
-        self.tab_2_header_label_1.grid(row=0, column=0, padx=20, pady=(5, 20))
+        self.tab_2_header_label_1 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame,
+            text="Terzband",
+        )
+        self.tab_2_header_label_1.grid(row=0, column=0, padx=5, pady=(5, 20))
         self.tab_2_header_label_2 = customtkinter.CTkLabel(
-            tab_2, text="Mittenfrequenz (fc)\n in Hz"
+            self.tab_2_entry_frame, text="Mittenfrequenz (fc)\n in Hz"
         )
-        self.tab_2_header_label_2.grid(row=0, column=1, padx=20, pady=(5, 20))
+        self.tab_2_header_label_2.grid(row=0, column=1, padx=10, pady=(5, 20))
         self.tab_2_header_label_3 = customtkinter.CTkLabel(
-            tab_2, text="Pegel (L)\n in dB"
+            self.tab_2_entry_frame, text="Pegel (L)\n in dB"
         )
-        self.tab_2_header_label_3.grid(row=0, column=2, padx=20, pady=(5, 20))
+        self.tab_2_header_label_3.grid(row=0, column=2, padx=10, pady=(5, 20))
         # Berechnen Button
         self.thirdbands_submit_button = customtkinter.CTkButton(
-            tab_2,
+            self.tab_2_control_frame,
             text="Mithörschwelle Berechnen",
             command=self.calculate_from_thirdband,
         )
-        self.thirdbands_submit_button.grid(row=0, column=4, padx=20, pady=(5, 0))
+        self.thirdbands_submit_button.grid(row=0, column=0, padx=20, pady=(20, 20))
         # Terzband hinzufügen Button
         self.add_thirdband_button = customtkinter.CTkButton(
-            tab_2,
+            self.tab_2_entry_frame,
             text="Band hinzufügen\n (+)",
             command=self.add_thirdband,
             fg_color="transparent",
             border_width=2,
             text_color=("gray10", "#DCE4EE"),
         )
-        self.add_thirdband_button.grid(row=9, column=0, padx=20, pady=(30, 0))
+        self.add_thirdband_button.grid(row=17, column=1, padx=10, pady=(30, 0))
         # Terzband entfernen Button
         self.remove_thirdband_button = customtkinter.CTkButton(
-            tab_2,
+            self.tab_2_entry_frame,
             text="Band entfernen\n (-)",
             command=self.remove_thirdband,
             state="disabled",
@@ -373,98 +380,457 @@ class App(customtkinter.CTk):
             border_width=2,
             text_color=("gray10", "#DCE4EE"),
         )
-        self.remove_thirdband_button.grid(row=9, column=1, padx=20, pady=(30, 0))
+        self.remove_thirdband_button.grid(row=17, column=2, padx=10, pady=(30, 0))
         # Terzband label
-        self.thirdband_label_1 = customtkinter.CTkLabel(tab_2, text="Terzband 1")
-        self.thirdband_label_1.grid(row=1, column=0, padx=20, pady=(5, 0))
-        self.thirdband_label_2 = customtkinter.CTkLabel(tab_2, text="Terzband 2")
-        self.thirdband_label_2.grid(row=2, column=0, padx=20, pady=(5, 0))
+        self.thirdband_label_1 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 1", width=50
+        )
+        self.thirdband_label_1.grid(row=1, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_2 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 2"
+        )
+        self.thirdband_label_2.grid(row=2, column=0, padx=5, pady=(5, 0))
         self.thirdband_label_2.grid_remove()
-        self.thirdband_label_3 = customtkinter.CTkLabel(tab_2, text="Terzband 3")
-        self.thirdband_label_3.grid(row=3, column=0, padx=20, pady=(5, 0))
+        self.thirdband_label_3 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 3"
+        )
+        self.thirdband_label_3.grid(row=3, column=0, padx=5, pady=(5, 0))
         self.thirdband_label_3.grid_remove()
-        self.thirdband_label_4 = customtkinter.CTkLabel(tab_2, text="Terzband 4")
-        self.thirdband_label_4.grid(row=4, column=0, padx=20, pady=(5, 0))
+        self.thirdband_label_4 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 4"
+        )
+        self.thirdband_label_4.grid(row=4, column=0, padx=5, pady=(5, 0))
         self.thirdband_label_4.grid_remove()
-        self.thirdband_label_5 = customtkinter.CTkLabel(tab_2, text="Terzband 5")
-        self.thirdband_label_5.grid(row=5, column=0, padx=20, pady=(5, 0))
+        self.thirdband_label_5 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 5"
+        )
+        self.thirdband_label_5.grid(row=5, column=0, padx=5, pady=(5, 0))
         self.thirdband_label_5.grid_remove()
-        self.thirdband_label_6 = customtkinter.CTkLabel(tab_2, text="Terzband 6")
-        self.thirdband_label_6.grid(row=6, column=0, padx=20, pady=(5, 0))
+        self.thirdband_label_6 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 6"
+        )
+        self.thirdband_label_6.grid(row=6, column=0, padx=5, pady=(5, 0))
         self.thirdband_label_6.grid_remove()
-        self.thirdband_label_7 = customtkinter.CTkLabel(tab_2, text="Terzband 7")
-        self.thirdband_label_7.grid(row=7, column=0, padx=20, pady=(5, 0))
+        self.thirdband_label_7 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 7"
+        )
+        self.thirdband_label_7.grid(row=7, column=0, padx=5, pady=(5, 0))
         self.thirdband_label_7.grid_remove()
+        self.thirdband_label_8 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 8"
+        )
+        self.thirdband_label_8.grid(row=8, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_8.grid_remove()
+        self.thirdband_label_9 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 9"
+        )
+        self.thirdband_label_9.grid(row=9, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_9.grid_remove()
+        self.thirdband_label_10 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 10"
+        )
+        self.thirdband_label_10.grid(row=10, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_10.grid_remove()
+        self.thirdband_label_11 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 11"
+        )
+        self.thirdband_label_11.grid(row=11, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_11.grid_remove()
+        self.thirdband_label_12 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 12"
+        )
+        self.thirdband_label_12.grid(row=12, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_12.grid_remove()
+        self.thirdband_label_13 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 13"
+        )
+        self.thirdband_label_13.grid(row=13, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_13.grid_remove()
+        self.thirdband_label_14 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 14"
+        )
+        self.thirdband_label_14.grid(row=14, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_14.grid_remove()
+        self.thirdband_label_15 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 15"
+        )
+        self.thirdband_label_15.grid(row=15, column=0, padx=5, pady=(5, 0))
+        self.thirdband_label_15.grid_remove()
+        self.thirdband_label_16 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 16"
+        )
+        self.thirdband_label_16.grid(row=1, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_16.grid_remove()
+        self.thirdband_label_17 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 17"
+        )
+        self.thirdband_label_17.grid(row=2, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_17.grid_remove()
+        self.thirdband_label_18 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 18"
+        )
+        self.thirdband_label_18.grid(row=3, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_18.grid_remove()
+        self.thirdband_label_19 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 19"
+        )
+        self.thirdband_label_19.grid(row=4, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_19.grid_remove()
+        self.thirdband_label_20 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 20"
+        )
+        self.thirdband_label_20.grid(row=5, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_20.grid_remove()
+        self.thirdband_label_21 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 21"
+        )
+        self.thirdband_label_21.grid(row=6, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_21.grid_remove()
+        self.thirdband_label_22 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 22"
+        )
+        self.thirdband_label_22.grid(row=7, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_22.grid_remove()
+        self.thirdband_label_23 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 23"
+        )
+        self.thirdband_label_23.grid(row=8, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_23.grid_remove()
+        self.thirdband_label_24 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 24"
+        )
+        self.thirdband_label_24.grid(row=9, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_24.grid_remove()
+        self.thirdband_label_25 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 25"
+        )
+        self.thirdband_label_25.grid(row=10, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_25.grid_remove()
+        self.thirdband_label_26 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 26"
+        )
+        self.thirdband_label_26.grid(row=11, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_26.grid_remove()
+        self.thirdband_label_27 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 27"
+        )
+        self.thirdband_label_27.grid(row=12, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_27.grid_remove()
+        self.thirdband_label_28 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 28"
+        )
+        self.thirdband_label_28.grid(row=13, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_28.grid_remove()
+        self.thirdband_label_29 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 29"
+        )
+        self.thirdband_label_29.grid(row=14, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_29.grid_remove()
+        self.thirdband_label_30 = customtkinter.CTkLabel(
+            self.tab_2_entry_frame, text="Terzband 30"
+        )
+        self.thirdband_label_30.grid(row=15, column=3, padx=5, pady=(5, 0))
+        self.thirdband_label_30.grid_remove()
         # Mittenfrequenz Eingabefelder
         self.entry_fc_1 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Mittenfrequenz"
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
         )
-        self.entry_fc_1.grid(row=1, column=1, padx=20, pady=(5, 0))
+        self.entry_fc_1.grid(row=1, column=1, padx=10, pady=(5, 0))
         self.entry_fc_2 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Mittenfrequenz"
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
         )
-        self.entry_fc_2.grid(row=2, column=1, padx=20, pady=(5, 0))
+        self.entry_fc_2.grid(row=2, column=1, padx=10, pady=(5, 0))
         self.entry_fc_2.grid_remove()
         self.entry_fc_3 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Mittenfrequenz"
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
         )
-        self.entry_fc_3.grid(row=3, column=1, padx=20, pady=(5, 0))
+        self.entry_fc_3.grid(row=3, column=1, padx=10, pady=(5, 0))
         self.entry_fc_3.grid_remove()
         self.entry_fc_4 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Mittenfrequenz"
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
         )
-        self.entry_fc_4.grid(row=4, column=1, padx=20, pady=(5, 0))
+        self.entry_fc_4.grid(row=4, column=1, padx=10, pady=(5, 0))
         self.entry_fc_4.grid_remove()
         self.entry_fc_5 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Mittenfrequenz"
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
         )
-        self.entry_fc_5.grid(row=5, column=1, padx=20, pady=(5, 0))
+        self.entry_fc_5.grid(row=5, column=1, padx=10, pady=(5, 0))
         self.entry_fc_5.grid_remove()
         self.entry_fc_6 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Mittenfrequenz"
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
         )
-        self.entry_fc_6.grid(row=6, column=1, padx=20, pady=(5, 0))
+        self.entry_fc_6.grid(row=6, column=1, padx=10, pady=(5, 0))
         self.entry_fc_6.grid_remove()
         self.entry_fc_7 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Mittenfrequenz"
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
         )
-        self.entry_fc_7.grid(row=7, column=1, padx=20, pady=(5, 0))
+        self.entry_fc_7.grid(row=7, column=1, padx=10, pady=(5, 0))
         self.entry_fc_7.grid_remove()
+        self.entry_fc_8 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_8.grid(row=8, column=1, padx=10, pady=(5, 0))
+        self.entry_fc_8.grid_remove()
+        self.entry_fc_9 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_9.grid(row=9, column=1, padx=10, pady=(5, 0))
+        self.entry_fc_9.grid_remove()
+        self.entry_fc_10 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_10.grid(row=10, column=1, padx=10, pady=(5, 0))
+        self.entry_fc_10.grid_remove()
+        self.entry_fc_11 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_11.grid(row=11, column=1, padx=10, pady=(5, 0))
+        self.entry_fc_11.grid_remove()
+        self.entry_fc_12 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_12.grid(row=12, column=1, padx=10, pady=(5, 0))
+        self.entry_fc_12.grid_remove()
+        self.entry_fc_13 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_13.grid(row=13, column=1, padx=10, pady=(5, 0))
+        self.entry_fc_13.grid_remove()
+        self.entry_fc_14 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_14.grid(row=14, column=1, padx=10, pady=(5, 0))
+        self.entry_fc_14.grid_remove()
+        self.entry_fc_15 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_15.grid(row=15, column=1, padx=10, pady=(5, 0))
+        self.entry_fc_15.grid_remove()
+        self.entry_fc_16 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_16.grid(row=1, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_16.grid_remove()
+        self.entry_fc_17 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_17.grid(row=2, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_17.grid_remove()
+        self.entry_fc_18 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_18.grid(row=3, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_18.grid_remove()
+        self.entry_fc_19 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_19.grid(row=4, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_19.grid_remove()
+        self.entry_fc_20 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_20.grid(row=5, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_20.grid_remove()
+        self.entry_fc_21 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_21.grid(row=6, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_21.grid_remove()
+        self.entry_fc_22 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_22.grid(row=7, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_22.grid_remove()
+        self.entry_fc_23 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_23.grid(row=8, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_23.grid_remove()
+        self.entry_fc_24 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_24.grid(row=9, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_24.grid_remove()
+        self.entry_fc_25 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_25.grid(row=10, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_25.grid_remove()
+        self.entry_fc_26 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_26.grid(row=11, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_26.grid_remove()
+        self.entry_fc_27 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_27.grid(row=12, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_27.grid_remove()
+        self.entry_fc_28 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_28.grid(row=13, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_28.grid_remove()
+        self.entry_fc_29 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_29.grid(row=14, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_29.grid_remove()
+        self.entry_fc_30 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Mittenfrequenz"
+        )
+        self.entry_fc_30.grid(row=15, column=4, padx=10, pady=(5, 0))
+        self.entry_fc_30.grid_remove()
         # Pegel Eingabefelder
         self.tab_2_entry_level_1 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Terzpegel"
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
         )
-        self.tab_2_entry_level_1.grid(row=1, column=2, padx=20, pady=(5, 0))
+        self.tab_2_entry_level_1.grid(row=1, column=2, padx=10, pady=(5, 0))
         self.tab_2_entry_level_2 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Terzpegel"
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
         )
-        self.tab_2_entry_level_2.grid(row=2, column=2, padx=20, pady=(5, 0))
+        self.tab_2_entry_level_2.grid(row=2, column=2, padx=10, pady=(5, 0))
         self.tab_2_entry_level_2.grid_remove()
         self.tab_2_entry_level_3 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Terzpegel"
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
         )
-        self.tab_2_entry_level_3.grid(row=3, column=2, padx=20, pady=(5, 0))
+        self.tab_2_entry_level_3.grid(row=3, column=2, padx=10, pady=(5, 0))
         self.tab_2_entry_level_3.grid_remove()
         self.tab_2_entry_level_4 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Terzpegel"
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
         )
-        self.tab_2_entry_level_4.grid(row=4, column=2, padx=20, pady=(5, 0))
+        self.tab_2_entry_level_4.grid(row=4, column=2, padx=10, pady=(5, 0))
         self.tab_2_entry_level_4.grid_remove()
         self.tab_2_entry_level_5 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Terzpegel"
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
         )
-        self.tab_2_entry_level_5.grid(row=5, column=2, padx=20, pady=(5, 0))
+        self.tab_2_entry_level_5.grid(row=5, column=2, padx=10, pady=(5, 0))
         self.tab_2_entry_level_5.grid_remove()
         self.tab_2_entry_level_6 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Terzpegel"
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
         )
-        self.tab_2_entry_level_6.grid(row=6, column=2, padx=20, pady=(5, 0))
+        self.tab_2_entry_level_6.grid(row=6, column=2, padx=10, pady=(5, 0))
         self.tab_2_entry_level_6.grid_remove()
         self.tab_2_entry_level_7 = customtkinter.CTkEntry(
-            tab_2, placeholder_text="Terzpegel"
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
         )
-        self.tab_2_entry_level_7.grid(row=7, column=2, padx=20, pady=(5, 0))
+        self.tab_2_entry_level_7.grid(row=7, column=2, padx=10, pady=(5, 0))
         self.tab_2_entry_level_7.grid_remove()
+        self.tab_2_entry_level_8 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_8.grid(row=8, column=2, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_8.grid_remove()
+        self.tab_2_entry_level_9 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_9.grid(row=9, column=2, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_9.grid_remove()
+        self.tab_2_entry_level_10 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_10.grid(row=10, column=2, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_10.grid_remove()
+        self.tab_2_entry_level_11 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_11.grid(row=11, column=2, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_11.grid_remove()
+        self.tab_2_entry_level_12 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_12.grid(row=12, column=2, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_12.grid_remove()
+        self.tab_2_entry_level_13 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_13.grid(row=13, column=2, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_13.grid_remove()
+        self.tab_2_entry_level_14 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_14.grid(row=14, column=2, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_14.grid_remove()
+        self.tab_2_entry_level_15 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_15.grid(row=15, column=2, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_15.grid_remove()
+        self.tab_2_entry_level_16 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_16.grid(row=1, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_16.grid_remove()
+        self.tab_2_entry_level_17 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_17.grid(row=2, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_17.grid_remove()
+        self.tab_2_entry_level_18 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_18.grid(row=3, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_18.grid_remove()
+        self.tab_2_entry_level_19 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_19.grid(row=4, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_19.grid_remove()
+        self.tab_2_entry_level_20 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_20.grid(row=5, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_20.grid_remove()
+        self.tab_2_entry_level_21 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_21.grid(row=6, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_21.grid_remove()
+        self.tab_2_entry_level_22 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_22.grid(row=7, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_22.grid_remove()
+        self.tab_2_entry_level_23 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_23.grid(row=8, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_23.grid_remove()
+        self.tab_2_entry_level_24 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_24.grid(row=9, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_24.grid_remove()
+        self.tab_2_entry_level_25 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_25.grid(row=10, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_25.grid_remove()
+        self.tab_2_entry_level_26 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_26.grid(row=11, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_26.grid_remove()
+        self.tab_2_entry_level_27 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_27.grid(row=12, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_27.grid_remove()
+        self.tab_2_entry_level_28 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_28.grid(row=13, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_28.grid_remove()
+        self.tab_2_entry_level_29 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_29.grid(row=14, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_29.grid_remove()
+        self.tab_2_entry_level_30 = customtkinter.CTkEntry(
+            self.tab_2_entry_frame, placeholder_text="Terzpegel"
+        )
+        self.tab_2_entry_level_30.grid(row=15, column=5, padx=10, pady=(5, 0))
+        self.tab_2_entry_level_30.grid_remove()
         self.thirdband_label_list = [
             self.thirdband_label_1,
             self.thirdband_label_2,
@@ -473,6 +839,29 @@ class App(customtkinter.CTk):
             self.thirdband_label_5,
             self.thirdband_label_6,
             self.thirdband_label_7,
+            self.thirdband_label_8,
+            self.thirdband_label_9,
+            self.thirdband_label_10,
+            self.thirdband_label_11,
+            self.thirdband_label_12,
+            self.thirdband_label_13,
+            self.thirdband_label_14,
+            self.thirdband_label_15,
+            self.thirdband_label_16,
+            self.thirdband_label_17,
+            self.thirdband_label_18,
+            self.thirdband_label_19,
+            self.thirdband_label_20,
+            self.thirdband_label_21,
+            self.thirdband_label_22,
+            self.thirdband_label_23,
+            self.thirdband_label_24,
+            self.thirdband_label_25,
+            self.thirdband_label_26,
+            self.thirdband_label_27,
+            self.thirdband_label_28,
+            self.thirdband_label_29,
+            self.thirdband_label_30,
         ]
         self.fc_entry_list = [
             self.entry_fc_1,
@@ -482,6 +871,29 @@ class App(customtkinter.CTk):
             self.entry_fc_5,
             self.entry_fc_6,
             self.entry_fc_7,
+            self.entry_fc_8,
+            self.entry_fc_9,
+            self.entry_fc_10,
+            self.entry_fc_11,
+            self.entry_fc_12,
+            self.entry_fc_13,
+            self.entry_fc_14,
+            self.entry_fc_15,
+            self.entry_fc_16,
+            self.entry_fc_17,
+            self.entry_fc_18,
+            self.entry_fc_19,
+            self.entry_fc_20,
+            self.entry_fc_21,
+            self.entry_fc_22,
+            self.entry_fc_23,
+            self.entry_fc_24,
+            self.entry_fc_25,
+            self.entry_fc_26,
+            self.entry_fc_27,
+            self.entry_fc_28,
+            self.entry_fc_29,
+            self.entry_fc_30,
         ]
         self.tab_2_level_entry_list = [
             self.tab_2_entry_level_1,
@@ -491,6 +903,29 @@ class App(customtkinter.CTk):
             self.tab_2_entry_level_5,
             self.tab_2_entry_level_6,
             self.tab_2_entry_level_7,
+            self.tab_2_entry_level_8,
+            self.tab_2_entry_level_9,
+            self.tab_2_entry_level_10,
+            self.tab_2_entry_level_11,
+            self.tab_2_entry_level_12,
+            self.tab_2_entry_level_13,
+            self.tab_2_entry_level_14,
+            self.tab_2_entry_level_15,
+            self.tab_2_entry_level_16,
+            self.tab_2_entry_level_17,
+            self.tab_2_entry_level_18,
+            self.tab_2_entry_level_19,
+            self.tab_2_entry_level_20,
+            self.tab_2_entry_level_21,
+            self.tab_2_entry_level_22,
+            self.tab_2_entry_level_23,
+            self.tab_2_entry_level_24,
+            self.tab_2_entry_level_25,
+            self.tab_2_entry_level_26,
+            self.tab_2_entry_level_27,
+            self.tab_2_entry_level_28,
+            self.tab_2_entry_level_29,
+            self.tab_2_entry_level_30,
         ]
 
         # Tab Datei Laden
@@ -607,12 +1042,12 @@ class App(customtkinter.CTk):
 
     # Hinzufügen der Eingabefelder für ein weiteres Terzband
     def add_thirdband(self):
-        if self.thirdband_count < 6:
+        if self.thirdband_count < 29:
             self.thirdband_count += 1
             self.thirdband_label_list[self.thirdband_count].grid()
             self.fc_entry_list[self.thirdband_count].grid()
             self.tab_2_level_entry_list[self.thirdband_count].grid()
-            if self.thirdband_count > 5:
+            if self.thirdband_count > 28:
                 self.add_thirdband_button.configure(state="disabled")
             if self.thirdband_count > 0:
                 self.remove_thirdband_button.configure(state="normal")
@@ -625,7 +1060,7 @@ class App(customtkinter.CTk):
             self.tab_2_level_entry_list[self.thirdband_count].grid_remove()
             if self.thirdband_count < 2:
                 self.remove_thirdband_button.configure(state="disabled")
-            if self.thirdband_count <= 6:
+            if self.thirdband_count <= 29:
                 self.add_thirdband_button.configure(state="normal")
             self.thirdband_count -= 1
 
