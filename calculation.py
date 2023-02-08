@@ -346,6 +346,24 @@ def fill_signal(signal):
     return filled_signal
 
 
+def fill_thirds(freqs, levels):
+    """fills gaps in thirds automatically"""
+    filled_freqs = []
+    filled_levels = []
+    filled_freqs.append(freqs[0])
+    filled_levels.append(levels[0])
+    for n in range(len(freqs) - 1):
+        curr_band = get_third_band(freqs[n], "center")
+        next_band = get_third_band(freqs[n + 1], "center")
+        if next_band[0] > curr_band[2]:
+            fill_band = get_third_band(curr_band[2], "low")
+            filled_freqs.append(fill_band[1])
+            filled_levels.append(-100)
+        filled_freqs.append(freqs[n + 1])
+        filled_levels.append(levels[n + 1])
+    return filled_freqs, filled_levels
+
+
 def round_list(values):
     """rounds all values in a given list with 1 decimal"""
     rounded = []

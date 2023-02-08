@@ -361,7 +361,7 @@ class App(customtkinter.CTk):
             text="Mithörschwelle Berechnen",
             command=self.calculate_from_thirdband,
         )
-        self.thirdbands_submit_button.grid(row=0, column=0, padx=20, pady=(20, 20))
+        self.thirdbands_submit_button.grid(row=1, column=0, padx=20, pady=(20, 20))
         # Terzband hinzufügen Button
         self.add_thirdband_button = customtkinter.CTkButton(
             self.tab_2_entry_frame,
@@ -1224,6 +1224,7 @@ class App(customtkinter.CTk):
     # Berechnen und Anzeigen der Mithörschwelle aus den eingegebenen Terzbändern
     def calculate_from_thirdband(self):
         graph.close_plots()
+        self.error_message.grid_remove()
         print("Berechne Mithörschwelle")
         i = self.thirdband_count
         freqs = []
@@ -1237,8 +1238,8 @@ class App(customtkinter.CTk):
                 level = float(level_entry)
                 freqs.append(fc)
                 levels.append(level)
-            self.error_message.grid_remove()
-            graph.render_plots(data.samples(), freqs, levels, smooth=False)
+                filled_freqs, filled_levels = calc.fill_thirds(freqs, levels)
+            graph.render_plots(data.samples(), filled_freqs, filled_levels)
         except Exception as inst:
             self.show_error(inst)
         # self.show_error(msg)
