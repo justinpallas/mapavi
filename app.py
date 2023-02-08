@@ -967,7 +967,7 @@ class App(customtkinter.CTk):
         self.third_levels_header = customtkinter.CTkLabel(
             self.thirdband_frame, text="Pegel\n in dB"
         )
-        self.third_levels_header.grid(row=0, column=0, padx=5, pady=(10, 0))
+        self.third_levels_header.grid(row=0, column=0, padx=(20, 5), pady=(10, 0))
         self.third_levels_label = customtkinter.CTkLabel(
             self.thirdband_frame,
             text="",
@@ -978,11 +978,11 @@ class App(customtkinter.CTk):
             height=500,
             width=50,
         )
-        self.third_levels_label.grid(row=2, column=0, padx=5, pady=(10, 0))
+        self.third_levels_label.grid(row=2, column=0, padx=(20, 5), pady=(10, 20))
         self.third_freqs_header = customtkinter.CTkLabel(
             self.thirdband_frame, text="Freq\n in Hz"
         )
-        self.third_freqs_header.grid(row=0, column=1, padx=10, pady=(10, 0))
+        self.third_freqs_header.grid(row=0, column=1, padx=(5, 20), pady=(10, 0))
         self.third_freqs_label = customtkinter.CTkLabel(
             self.thirdband_frame,
             text="",
@@ -993,7 +993,7 @@ class App(customtkinter.CTk):
             height=500,
             width=50,
         )
-        self.third_freqs_label.grid(row=2, column=1, padx=10, pady=(10, 0))
+        self.third_freqs_label.grid(row=2, column=1, padx=(5, 20), pady=(10, 20))
         # Terzbänder auslesen Button
         self.file_read_button = customtkinter.CTkButton(
             self.amplifier_frame,
@@ -1031,7 +1031,7 @@ class App(customtkinter.CTk):
         # Tab Terzband berechnen
         tab_4 = self.tabview.tab("Terzbandrechner")
         self.tab_4_control_frame = customtkinter.CTkFrame(tab_4)
-        self.tab_4_control_frame.grid(row=1, column=0, padx=10, pady=10)
+        self.tab_4_control_frame.grid(row=1, column=0, padx=10, pady=(50, 10))
         self.tab_4_show_frame = customtkinter.CTkFrame(tab_4)
         self.tab_4_show_frame.grid(row=2, column=0, padx=10, pady=20)
 
