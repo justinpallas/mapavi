@@ -2,6 +2,17 @@
 import math
 from bisect import bisect_left
 
+
+def sort_freqs(freqs, levels):
+    """sorts the given freqs and the according levels from small to big"""
+    combined = []
+    for index, freq in enumerate(freqs):
+        combined.append((freq, levels[index]))
+    sorted_by_freq = sorted(combined, key=lambda tup: tup[0])
+    sorted_freqs, sorted_levels = list(map(list, zip(*sorted_by_freq)))
+    return sorted_freqs, sorted_levels
+
+
 # Umrechnung von Frequenz in die Entsprechende Tonheit (Bark)
 
 

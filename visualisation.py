@@ -68,6 +68,9 @@ def render_plots(x, freq_center, volume, smooth=True, show_calibration="none"):
     ax1 = axs[0]
     ax2 = axs[1]
 
+    # Frequenzen aufsteigend sortieren
+    freq_center, volume = calc.sort_freqs(freq_center, volume)
+
     # Festlegung, ob der Graph "geglättet" werden soll, oder nicht
     thresh = calc.multi_threshold(x, volume, freq_center)
     smoothed = calc.smoothed_threshold(x, volume, freq_center)
