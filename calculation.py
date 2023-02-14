@@ -359,6 +359,7 @@ def fill_signal(signal):
 
 def fill_thirds(freqs, levels):
     """fills gaps in thirds automatically"""
+    freqs, levels = sort_freqs(freqs, levels)
     filled_freqs = []
     filled_levels = []
     filled_freqs.append(freqs[0])
@@ -370,6 +371,10 @@ def fill_thirds(freqs, levels):
             fill_band = get_third_band(curr_band[2], "low")
             filled_freqs.append(fill_band[1])
             filled_levels.append(-100)
+            for z in range(len(cut_to_thirds((curr_band[2], next_band[0]))) - 1):
+                fill_band = get_third_band(fill_band[2], "low")
+                filled_freqs.append(fill_band[1])
+                filled_levels.append(-100)
         filled_freqs.append(freqs[n + 1])
         filled_levels.append(levels[n + 1])
     return filled_freqs, filled_levels
