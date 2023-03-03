@@ -66,12 +66,14 @@ def intensity(level):
         return intensity
 
 
-# Berechnung des Verdeckungsmaßes av
+# Berechnung des Verdeckungsmaßes av nach DIN 45681  Akustik -
+# Bestimmung der Tonhaltigkeit von Geräuschen und Ermittlung eines Tonzuschlages
+# für die Beurteilung von Geräuschimmissionen
 
 
 def masking_index(frequency):
     """calculates the masking index to a given frequency"""
-    index = -(-2 - math.log(1 + (frequency / 502) ** 2.5) / math.log(10))
+    index = -(-2 - math.log10(1 + (frequency / 502) ** 2.5))
     return index
 
 
