@@ -63,7 +63,7 @@ thirdbands("on")
 
 
 def render_plots(x, freq_center, volume, smooth=True, show_calibration="none"):
-    fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(14, 15))
+    fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(9, 10))
 
     ax1 = axs[0]
     ax2 = axs[1]
@@ -86,20 +86,20 @@ def render_plots(x, freq_center, volume, smooth=True, show_calibration="none"):
     # -- Diagramm für Darstellung in der Tonheit --
     # Allgemein
     ax1.grid(True)
-    ax1.set_title("Darstellung in der Tonheit", fontsize=24)
+    ax1.set_title("Darstellung in der Tonheit", fontsize=18)
 
     # X-Achse
-    ax1.set_xlabel("Tonheit z [Bark]", fontsize=20)
+    ax1.set_xlabel("Tonheit z [Bark]", fontsize=18)
     ax1.set_xlim([0, 24])
     # ax1.set_xscale('symlog')
     ax1.set_xticks([2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24])
     # ax1.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
 
     # Y-Achse
-    ax1.set_ylabel("Pegel L [dB]", fontsize=20)
+    ax1.set_ylabel("Pegel L [dB]", fontsize=18)
     ax1.set_ylim([-10, dBlim])
 
-    ax1.tick_params(axis="both", labelsize=16)
+    ax1.tick_params(axis="both", labelsize=14)
 
     # Darstellung der Ruhehörschwelle
     (line1,) = ax1.plot(calc.conv_to_bark(data.tiq_freq), data.tiq_level, "k--.")
@@ -122,16 +122,16 @@ def render_plots(x, freq_center, volume, smooth=True, show_calibration="none"):
     # -- Diagramm mit Darstellung in der Frequenz --
     # Allgemein
     ax2.grid(True)
-    ax2.set_title("Darstellung in der Frequenz", fontsize=24)
+    ax2.set_title("Darstellung in der Frequenz", fontsize=18)
 
     # X-Achse
-    ax2.set_xlabel("Frequenz f [Hz]", fontsize=20)
+    ax2.set_xlabel("Frequenz f [Hz]", fontsize=18)
     ax2.set_xlim([16, 22000])
     ax2.set_xscale("symlog")
     ax2.set_xticks([16, 31.5, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000])
     ax2.get_xaxis().set_major_formatter(mticker.ScalarFormatter())
     # Y-Achse
-    ax2.set_ylabel("Pegel L [dB]", fontsize=20)
+    ax2.set_ylabel("Pegel L [dB]", fontsize=16)
     ax2.set_ylim([-10, dBlim])
 
     ax2.tick_params(axis="both", labelsize=16)
@@ -175,28 +175,28 @@ def render_plots(x, freq_center, volume, smooth=True, show_calibration="none"):
     if show_calibration != "none":
         ax1.text(
             1.5,
-            75,
+            70,
             show_calibration,
             style="italic",
             bbox={"facecolor": "green", "alpha": 0.5, "pad": 10},
-            fontsize=16,
+            fontsize=14,
         )
         ax2.text(
             28,
-            75,
+            70,
             show_calibration,
             style="italic",
             bbox={"facecolor": "green", "alpha": 0.5, "pad": 10},
-            fontsize=16,
+            fontsize=12,
         )
 
     # -- Anzeigen der Diagramme --
     ax2.legend(
         loc="lower center",
-        bbox_to_anchor=(0.5, -0.37),
+        bbox_to_anchor=(0.5, -0.47),
         fancybox=True,
         shadow=True,
-        fontsize=16,
+        fontsize=12,
     )
     fig.tight_layout()
     plt.show()
