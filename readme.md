@@ -1,5 +1,7 @@
 # MaPaVi - Masking Pattern Visualizer
 
+![alt text](https://file%2B.vscode-resource.vscode-cdn.net/Users/justinpallas/Downloads/Karte.png?version%3D1707487915155)
+
 ## Purpose
 
 Whether it's for developing effective data reduction methods or creating clean music mixes, psychoacoustic masking effects are highly significant across nearly all areas of sound engineering and audio. By analyzing auditory masking thresholds, it's possible to determine which data in an audio signal are imperceptible to the human ear and can be removed, or how loud a specific musical instrument can be set without excessively covering others in the mix. Masking effects also play a crucial role in everyday life. For example, they make it harder for us to understand someone speaking in a conversation at a busy intersection compared to a quiet room. The way certain background noises impair our hearing can be visualized through the representation of corresponding auditory masking threshold patterns.
